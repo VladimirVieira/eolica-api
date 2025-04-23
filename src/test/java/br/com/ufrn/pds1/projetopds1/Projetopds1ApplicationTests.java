@@ -1,10 +1,10 @@
-package br.com.ufrn.pds.projetopds;
+package br.com.ufrn.pds1.projetopds1;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ProjetopdsApplicationTests {
+class Projetopds1ApplicationTests {
 
 	@Test
 	void contextLoads() {

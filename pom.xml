@@ -8,10 +8,10 @@
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>br.com.ufrn.pds</groupId>
-	<artifactId>projetopds</artifactId>
+	<groupId>br.com.ufrn.pds1</groupId>
+	<artifactId>projetopds1</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>projetopds</name>
+	<name>projetopds1</name>
 	<description>Projeto Desenvolvido para a disciplina de PDS</description>
 	<url/>
 	<licenses>
@@ -32,9 +32,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
