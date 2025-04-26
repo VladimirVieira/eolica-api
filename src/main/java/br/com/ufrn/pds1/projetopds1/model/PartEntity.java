@@ -1,5 +1,6 @@
 package br.com.ufrn.pds1.projetopds1.model;
 
+import br.com.ufrn.pds1.projetopds1.DTO.PartDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,14 +25,20 @@ public class PartEntity {
     String manufacturer;
 
     @Column(name = "Id do aerogerador")
-    long turbineId;
+    Long turbineId;
 
     @Column(name = "Código da estação")
-    long stationId;
+    Long stationId;
 
     @Column(name = "Descrição adicional")
     String description;
 
 
-
+    public PartEntity(PartDTO partDTO) {
+        this.name = partDTO.getName();
+        this.manufacturer = partDTO.getManufacturer();
+        this.turbineId = partDTO.getTurbineId();
+        this.stationId = partDTO.getStationId();
+        this.description = partDTO.getDescription();
+    }
 }

@@ -12,9 +12,9 @@ public class PartDTO {
 
     String manufacturer;
 
-    long turbineId;
+    Long turbineId;
 
-    long stationId;
+    Long stationId;
 
     String description;
 }
