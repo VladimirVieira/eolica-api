@@ -41,4 +41,11 @@ public class PartController {
         List<PartEntity> part = partService.getAllParts();
         return ResponseEntity.ok().body(part);
     }
+
+    //Metodo getById
+    @GetMapping("getById/{id}")
+    public ResponseEntity<PartEntity> getById(@PathVariable long id) {
+        PartEntity part = partService.getPartById(id);
+        return ResponseEntity.ok().body(part);
+    }
 }
