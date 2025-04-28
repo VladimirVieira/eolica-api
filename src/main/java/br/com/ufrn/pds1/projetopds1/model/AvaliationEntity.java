@@ -1,5 +1,6 @@
 package br.com.ufrn.pds1.projetopds1.model;
 
+import br.com.ufrn.pds1.projetopds1.DTO.AvaliationDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,4 +26,10 @@ public class AvaliationEntity {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "part_id")
     private PartEntity partEntity;
+
+    public AvaliationEntity(AvaliationDTO avaliationDTO) {
+        this.apraiser = avaliationDTO.getApraiser();
+        this.avaliation = avaliationDTO.getAvaliation();
+
+    }
 }
