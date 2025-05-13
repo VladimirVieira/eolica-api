@@ -1,16 +1,19 @@
 package br.com.ufrn.pds.projetopds.controller;
 
-import br.com.ufrn.pds.projetopds.model.DocumentEntity;
 import br.com.ufrn.pds.projetopds.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("document")
@@ -18,7 +21,7 @@ public class DocumentController {
     @Autowired
     private DocumentService documentService;
 
-    @PostMapping("/upload")
+    @PostMapping("upload")
     public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file) {
         try{
             String path = documentService.saveDocument(file);
@@ -27,4 +30,12 @@ public class DocumentController {
             return ResponseEntity.badRequest().body("Erro ao tentar salvar o arquivo!" + e.getMessage());
         }
     }
+
+    @GetMapping("download/{filename}")
+    public ResponseEntity<Resource> downloadDocument(@PathVariable String filename) throws MalformedURLException {
+        Path path = Paths.get("src/main/resources/static/uploads/" + filename);
+        Resource recurso = new UrlResource(path.toUri());
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").body(recurso);
+    }
+
 }
