@@ -15,11 +15,11 @@ Para se ter uma melhor compreensão acerca de fontes de energia renováveis, con
     ./mvnw spring-boot:run
 
 
-## Para visualizar funcionando:
+## 3. Para visualizar funcionando:
 
     http://localhost:8080
 
-## Tarefas concluídas ou em andamento
+## 4. Tarefas concluídas ou em andamento
 
 - [X]    __*Previsão do Tempo*__
 
