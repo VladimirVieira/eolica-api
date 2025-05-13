@@ -15,7 +15,7 @@ Para se ter uma melhor compreensão acerca de fontes de energia renováveis, con
     ./mvnw spring-boot:run
 
 
-## Para visualizar funcionando, você deve abrir o seu navegador e digitar:
+## Para visualizar funcionando:
 
     http://localhost:8080
 
