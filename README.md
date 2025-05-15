@@ -27,4 +27,10 @@ Para se ter uma melhor compreensão acerca de fontes de energia renováveis, con
 
 - [X]    __*Histórico do Tempo*__
 
+- [X]    __#Crud Peças*__
+
+- [X]    __#Crud Avaliações*__
+
+- [X]    __#Crud Document*__
+
 
