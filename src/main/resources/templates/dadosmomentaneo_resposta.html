@@ -12,33 +12,25 @@
             <h1>SisG<span class="branco">PE</span></h1>
         </div>
         <div id="area-menu">
-            <a href="/">Home</a>
-            <a href="historicoprevi.html">XXX</a>
-            <a href="xxxxxxxxxxx">VVVV</a>
-            <a href="xxxxxxxxxxx">YYYYY</a>
-            <a href="xxxxxxxxxxx">WWWWWW</a>
+            <a href="/">Dados Local</a>
+            <a href="/historico1">Historico</a>
+            <a href="/previsaosemana">Previsao semanal</a>
+            <a href="/previsaoalerta">Alertas</a>
         </div>
     </div>
 
     <div id="area-principal">
         <div id="area-postagens">
-
-
+        
             <!-- resultado da consulta -->
             <div class="postagem" th:if="${clima != null}">
                 <h2>Resultado meteorológicos</h2>
                 <br>
-                <p><strong>Data:</strong><input type="text" th:value="${clima.data}" readonly></p><br>
-                <p><strong>Temperatura:</strong><input type="text" th:value="${clima.temperatura}" readonly></p><br>
-                
-                
-                <p><strong>Velocidade do vento:</strong> <input type="text" th:value="${clima.velVento}" readonly></p><br>
-                
-                <p><strong>Latitude:</strong> <input type="text" th:value="${clima.latitude}" readonly></p><br>
-     
-               
-                
-                <p><strong>Longitude:</strong> <input type="text" th:value="${clima.longitude}" readonly></p> 
+                	<p><strong>Data:</strong><input type="text" th:value="${clima.data}" readonly></p><br>
+                	<p><strong>Temperatura:</strong><input type="text" th:value="${clima.temperatura}" readonly></p><br>
+                	<p><strong>Velocidade do vento:</strong> <input type="text" th:value="${clima.velVento}" readonly></p><br>               
+                	<p><strong>Latitude:</strong> <input type="text" th:value="${clima.latitude}" readonly></p><br>
+                	<p><strong>Longitude:</strong> <input type="text" th:value="${clima.longitude}" readonly></p> 
                 
                 <br>
                 
@@ -49,8 +41,7 @@
             <div class="postagem" th:if="${erro != null}">
                 <p th:text="${erro}"></p>
             </div>
-            <!--// fim do resultado -->
-			
+            <!--// fim do resultado -->	
         </div>
 
         <div id="rodape">

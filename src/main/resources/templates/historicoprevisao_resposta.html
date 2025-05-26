@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SisGPE</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../estilo.css">
+	
+</head>
+<body>
+
+	<div id="area-cabecalho">
+		
+		<div id="area-logo">
+			<h1>SisG<span class="branco">PE</span></h1>
+		</div>
+		<div id="area-menu">
+			<a href="/">Dados Local</a>
+			<a href="/historico1">Historico</a>
+			<a href="/previsaosemana">Previsao semanal</a>
+			<a href="/previsaoalerta">Alertas</a>
+		</div>
+
+	</div>
+
+	<div id="area-principal">
+		<div id="area-postagens">		
+			<h2>Consultar histórico</h2>
+		<br>
+	<div class="postagem">
+    	<canvas id="graficoTemperaturas" width="400" height="250"></canvas>
+   	</div>
+
+	<div class="postagem">
+    	<canvas id="graficoTrimestres" width="400" height="250"></canvas>
+	</div>
+
+	<!-- Importar Chart.js -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+	<script th:inline="javascript">
+	
+    	// Obtem Gráfico de linha para temperaturas máxima e mínima
+    	const ctxTemp = document.getElementById('graficoTemperaturas').getContext('2d');
+    	const chartTemp = new Chart(ctxTemp, {
+        	type: 'line',
+        	data: {
+            	labels: [[${hist.data}]], // datas
+            	datasets: [
+                	{
+                    	label: 'Temperatura Máxima',
+                    	borderColor: 'rgb(255, 99, 132, 1)',
+                    	data: [[${hist.tempMax}]],
+                    	fill: false,
+                    	tension: 0.1
+                	},
+                	{
+                    	label: 'Temperatura Mínima',
+                    	borderColor: 'rgba(0, 64, 0, 0.7)',
+                    	data: [[${hist.tempMin}]],
+                    	fill: false,
+                    	tension: 0.1
+                	}
+            	]
+        	},
+        	options: {
+            	responsive: true,
+            	plugins: {legend: {position: 'right'}},//posiciona a legenda ao lado direito
+            	scales: { x: { title: { display: true, text: 'Data' } },
+                      	  y: { title: { display: true, text: 'Temperatura (°C)' } }}
+        	}
+    	});
+
+    // Obtem Gráfico de barras relativo médias trimestrais de vento
+    	const ctxTri = document.getElementById('graficoTrimestres').getContext('2d');
+    	const graficoTrimestres = new Chart(ctxTri, {
+        	type: 'bar',
+        	data: {
+            	labels: ['1º Trimestre', '2º Trimestre', '3º Trimestre', '4º Trimestre'],
+            	datasets: [{
+                	label: 'Média Vento (m/s)',
+                	data: [
+                    		[[${hist.primeiroTrimestre}]],
+                   			[[${hist.segundoTrimestre}]],
+                   			[[${hist.terceiroTrimestre}]],
+                   			[[${hist.quartoSemestre}]]
+                	  	],  
+                	  	backgroundColor: 'rgba(0, 64, 0, 0.2)', // verde transparente
+                      	borderWidth: 1,
+                      	borderColor: 'rgba(0, 64, 0, 1)'
+            	}]
+        	},
+        	options: {
+            	responsive: true,
+            	plugins: {legend: {position: 'right'}},
+            	scales: {y: {beginAtZero: true}}
+        	}
+    	});
+	</script>
+   
+		</div>
+
+		<div id="rodape">
+			<strong>SisGPE</strong>
+		</div>
+
+	</div>
+	
+	
+
+</body>
+</html>

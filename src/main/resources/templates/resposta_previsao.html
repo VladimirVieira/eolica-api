@@ -13,11 +13,10 @@
             <h1>SisG<span class="branco">PE</span></h1>
         </div>
         <div id="area-menu">
-            <a href="index.html">Dados Local</a>
-            <a href="historicoprevi.html">Histórico</a>
-            <a href="">VVVV</a>
-            <a href="">YYYYY</a>
-            <a href="#">WWWWWW</a>
+            <a href="/">Dados Local</a>
+            <a href="/historico1">Historico</a>
+            <a href="/previsaosemana">Previsão semanal</a>
+            <a href="/previsaoalerta">Alertas</a>
         </div>
     </div>
 
@@ -29,43 +28,32 @@
                 <canvas id="graficoVentos" width="400" height="250"></canvas>
             </div>
 
-            <script th:inline="javascript">
-    const datas = ["1 dia", "2 dia", "3 dia", "4 dia", "5 dia", "6 dia", "7 dia"];
-    const ventos = [[${prev.previsaoVento}]];
-
-    const ctxVento = document.getElementById('graficoVentos').getContext('2d');
-    const chartVento = new Chart(ctxVento, {
-        type: 'line',
-        data: {
-            labels: datas,
-            datasets: [{
-                label: 'Velocidade do Vento (km/h)',
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                data: ventos,
-                fill: true,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Dia'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Vento (km/h)'
-                    }
-                }
-            }
-        }
-    });
-</script>
+            	<script th:inline="javascript">
+    			const datas = ["1 dia", "2 dia", "3 dia", "4 dia", "5 dia", "6 dia", "7 dia"];
+    			const ventos = [[${prev.previsaoVento}]];
+    			const ctxVento = document.getElementById('graficoVentos').getContext('2d');
+    			const chartVento = new Chart(ctxVento, {
+        								 type: 'line',
+        								 data: {
+            							 labels: datas,
+           								 datasets: [{
+               										 label: 'Velocidade do Vento (km/h)',
+                									 borderColor: 'rgba(0, 64, 0, 1)',
+                									 backgroundColor: 'rgba(0, 64, 0, 0.7)',
+                									 data: ventos,
+                									 fill: false,
+                									 tension: 0.1
+            										 }]
+        								 },
+        								 options: {
+            										responsive: true,
+            										plugins: {legend: {position: 'right'}},//posiciona a legenda ao lado direito
+            										scales: {x: {title: {display: true, text: 'Dia'}},
+                     										 y: {title: {display: true,text: 'Vento (km/h)'}}
+            											}
+        											}
+    									});
+			</script>
             
         </div>
 
@@ -75,4 +63,5 @@
     </div>
 
 </body>
+
 </html>
