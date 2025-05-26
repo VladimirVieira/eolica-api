@@ -1,4 +1,4 @@
-package br.com.ufrn.pds.projetopds.model;
+package br.com.ufrn.pds1.projetopds1.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,4 +21,30 @@ public class DocumentEntity {
 
     @Column(name = "Caminho do arquivo")
     String path;
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+    
+    
 }

@@ -12,4 +12,30 @@ public class AvaliationDTO {
     String avaliation;
 
     Long partId;
+
+	public String getApraiser() {
+		return apraiser;
+	}
+
+	public void setApraiser(String apraiser) {
+		this.apraiser = apraiser;
+	}
+
+	public String getAvaliation() {
+		return avaliation;
+	}
+
+	public void setAvaliation(String avaliation) {
+		this.avaliation = avaliation;
+	}
+
+	public Long getPartId() {
+		return partId;
+	}
+
+	public void setPartId(Long partId) {
+		this.partId = partId;
+	}
+    
+    
 }

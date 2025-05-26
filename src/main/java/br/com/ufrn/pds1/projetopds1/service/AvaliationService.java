@@ -21,7 +21,7 @@ public class AvaliationService {
 
     //Metodo de post da avaliação
     public AvaliationEntity postAvaliation(AvaliationDTO avaliationDTO) {
-        AvaliationEntity avaliation = new AvaliationEntity();
+        AvaliationEntity avaliation = new AvaliationEntity(avaliationDTO);
         avaliation.setApraiser(avaliationDTO.getApraiser());
         avaliation.setAvaliation(avaliationDTO.getAvaliation());
         PartEntity partEntity = partRepository.findById(avaliationDTO.getPartId()).orElseThrow(()-> new RuntimeException("Part not found"));

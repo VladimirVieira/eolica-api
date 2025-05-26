@@ -32,4 +32,38 @@ public class AvaliationEntity {
         this.avaliation = avaliationDTO.getAvaliation();
 
     }
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getApraiser() {
+		return apraiser;
+	}
+
+	public void setApraiser(String apraiser) {
+		this.apraiser = apraiser;
+	}
+
+	public String getAvaliation() {
+		return avaliation;
+	}
+
+	public void setAvaliation(String avaliation) {
+		this.avaliation = avaliation;
+	}
+
+	public PartEntity getPartEntity() {
+		return partEntity;
+	}
+
+	public void setPartEntity(PartEntity partEntity) {
+		this.partEntity = partEntity;
+	}
+    
+    
 }

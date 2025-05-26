@@ -1,6 +1,5 @@
-package br.com.ufrn.pds.projetopds.controller;
+package br.com.ufrn.pds1.projetopds1.controller;
 
-import br.com.ufrn.pds.projetopds.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -9,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import br.com.ufrn.pds1.projetopds1.service.DocumentService;
 
 import java.io.IOException;
 import java.net.MalformedURLException;

@@ -1,7 +1,8 @@
-package br.com.ufrn.pds.projetopds.service;
+package br.com.ufrn.pds1.projetopds1.service;
 
-import br.com.ufrn.pds.projetopds.model.DocumentEntity;
-import br.com.ufrn.pds.projetopds.repository.DocumentRepository;
+import br.com.ufrn.pds1.projetopds1.model.DocumentEntity;
+import br.com.ufrn.pds1.projetopds1.repository.DocumentRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

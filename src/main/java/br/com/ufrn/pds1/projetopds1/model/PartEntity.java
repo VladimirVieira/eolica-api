@@ -41,4 +41,66 @@ public class PartEntity {
         this.stationId = partDTO.getStationId();
         this.description = partDTO.getDescription();
     }
+
+
+	public long getId() {
+		return id;
+	}
+
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getManufacturer() {
+		return manufacturer;
+	}
+
+
+	public void setManufacturer(String manufacturer) {
+		this.manufacturer = manufacturer;
+	}
+
+
+	public Long getTurbineId() {
+		return turbineId;
+	}
+
+
+	public void setTurbineId(Long turbineId) {
+		this.turbineId = turbineId;
+	}
+
+
+	public Long getStationId() {
+		return stationId;
+	}
+
+
+	public void setStationId(Long stationId) {
+		this.stationId = stationId;
+	}
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+    
+    
 }
