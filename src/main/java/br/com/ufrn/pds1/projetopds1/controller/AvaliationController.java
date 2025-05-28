@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@ControllerAdvice
 @RestController
 @RequestMapping("avaliation")
 public class AvaliationController {
@@ -22,6 +23,7 @@ public class AvaliationController {
         return ResponseEntity.ok().body(avaliationEntityList);
     }
 
+    //LANCA EXCECAO DE AVLIATION N ENCONTRADA
     //Metodo de getById do Avaliation
     @GetMapping("getById/{id}")
     public ResponseEntity<AvaliationEntity> getById(@PathVariable long id){
@@ -30,6 +32,7 @@ public class AvaliationController {
 
     }
 
+    //PODE SER LANCADA EXC3ECOE DE PECA NAO ENCONTRADA
     //Metodo de post do Avaliation
     @PostMapping("postAvaliation")
     public ResponseEntity<AvaliationEntity> postAvaliation(@RequestBody AvaliationDTO avaliationDTO){
@@ -37,6 +40,7 @@ public class AvaliationController {
         return ResponseEntity.ok().body(avaliation);
     }
 
+    //LANCA EXCECAO DE AVLIATION N ENCONTRADA
     //Metodo do put do Avaliation
     @PutMapping("putAvaliation/{id}")
     public ResponseEntity<AvaliationEntity> putAvaliation(@PathVariable long id, @RequestBody AvaliationDTO avaliationATT){
@@ -44,6 +48,7 @@ public class AvaliationController {
         return ResponseEntity.ok().body(avaliation);
     }
 
+    //LANCA EXCECAO DE AVLIATION N ENCONTRADA
     //Metodo de delete do Avaliation
     @DeleteMapping("deleteAvaliation/{id}")
     public ResponseEntity<AvaliationEntity> deleteAvaliation(@PathVariable long id){

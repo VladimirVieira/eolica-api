@@ -8,6 +8,7 @@ import br.com.ufrn.pds1.projetopds1.repository.PartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +25,8 @@ public class AvaliationService {
         AvaliationEntity avaliation = new AvaliationEntity(avaliationDTO);
         avaliation.setApraiser(avaliationDTO.getApraiser());
         avaliation.setAvaliation(avaliationDTO.getAvaliation());
-        PartEntity partEntity = partRepository.findById(avaliationDTO.getPartId()).orElseThrow(()-> new RuntimeException("Part not found"));
-        avaliation.setPartEntity(partEntity);
+        Optional<PartEntity> partEntity = partRepository.findById(avaliationDTO.getPartId());
+        avaliation.setPartEntity(partEntity.get());
         return avaliationRepository.save(avaliation);
     }
     //Metodo put da avaliação
