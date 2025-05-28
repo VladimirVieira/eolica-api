@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("avaliation")
+@RestController
+@RequestMapping("avaliation")
 public class AvaliationController {
     @Autowired
     private AvaliationService avaliationService;
@@ -37,13 +38,14 @@ public class AvaliationController {
     }
 
     //Metodo do put do Avaliation
-    @PutMapping("putAvaliation")
+    @PutMapping("putAvaliation/{id}")
     public ResponseEntity<AvaliationEntity> putAvaliation(@PathVariable long id, @RequestBody AvaliationDTO avaliationATT){
         AvaliationEntity avaliation = avaliationService.putAvaliation(id, avaliationATT);
         return ResponseEntity.ok().body(avaliation);
     }
 
     //Metodo de delete do Avaliation
+    @DeleteMapping("deleteAvaliation/{id}")
     public ResponseEntity<AvaliationEntity> deleteAvaliation(@PathVariable long id){
         AvaliationEntity avaliation = avaliationService.deleteAvaliation(id);
         return ResponseEntity.ok().body(avaliation);
