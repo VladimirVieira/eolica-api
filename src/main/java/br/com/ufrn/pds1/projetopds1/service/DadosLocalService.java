@@ -10,41 +10,70 @@ import br.com.ufrn.pds1.projetopds1.model.DadosLocal;
 
 @Service
 public class DadosLocalService {
-	public DadosLocal pesquisarDados(String latitude, String longitude, String data) {
-		String url = String.format(
-        	    "https://api.open-meteo.com/v1/forecast?latitude=%s&longitude=%s&hourly=temperature_2m,windspeed_10m&start_date=%s&end_date=%s&timezone=America/Fortaleza",
-        	    latitude, longitude, data, data);
+	
+	//**********************************************************************************************************************
+		//Constroi a URL
+		public String construirUrl(String latitude, String longitude, String data) {
+			
 		
-		
+					
+			return  String.format(
+					"https://api.open-meteo.com/v1/forecast?"
+					+ "latitude=%s&"
+					+ "longitude=%s&"
+					+ "hourly=temperature_2m,windspeed_10m&start_date=%s&end_date=%s&timezone=America/Fortaleza"
+					,latitude, longitude, data, data);
+		}
+	
+	//**********************************************************************************************************************	
+	//Extraindo dados da open-meteo
+	public Map<String, Object>obterDadosDaApi(String url){
+		//Fazendo requisição HTTP
 		RestTemplate restTemplate = new RestTemplate();
+		Map<String, Object> resposta = restTemplate.getForObject(url, Map.class);
+		Map<String, Object> hourly = (Map<String, Object>) resposta.get("hourly");
+		return hourly;
+			
+	}
+			
+	//**********************************************************************************************************************
+	//Método para obter dados de temperatura do dia
+	public Double obterDadosTemperatura(Map<String, Object> hourly){
+		List<Double> temperaturas = (List<Double>) hourly.get("temperature_2m");
+		return temperaturas.get(18);
+		
+	}
+	
+	//**********************************************************************************************************************
+	//Método para obter dados de temperatura do dia
+	public Double obterDadosVentos(Map<String, Object> hourly){
+        List<Double> ventos = (List<Double>) hourly.get("windspeed_10m");
+		return ventos.get(18);
+		
+	}
+	
+	
+	
+	//**********************************************************************************************************************
+	public DadosLocal pesquisarDados(String latitude, String longitude, String data) {
+		
+		String url = construirUrl(latitude, longitude, data);
+		Map<String, Object> hourly = obterDadosDaApi(url);
 
-        try {
-       
-            var resposta = restTemplate.getForObject(url, Map.class);
 
-            if (resposta != null) {
-                var hourly = (Map<?, ?>) resposta.get("hourly");
-
-                var temperaturas = (List<?>) hourly.get("temperature_2m");
-                var ventos = (List<?>) hourly.get("windspeed_10m");
-
-                // Pega os dados do índice 18 
-                double temp = Double.parseDouble(temperaturas.get(18).toString());
-                double velVento = Double.parseDouble(ventos.get(18).toString());
+        // Pega os dados do índice 18 
+        double temp = obterDadosTemperatura(hourly);
+        double velVento = obterDadosVentos(hourly);
 
                
-                DadosLocal info = new DadosLocal();
-                info.setData(data);
-                info.setLatitude(Double.parseDouble(latitude));
-                info.setLongitude(Double.parseDouble(longitude));
-                info.setTemperatura(temp);
-                info.setVelVento(velVento);
+        DadosLocal informacao = new DadosLocal();
+        informacao.setData(data);
+        informacao.setLatitude(Double.parseDouble(latitude));
+        informacao.setLongitude(Double.parseDouble(longitude));
+        informacao.setTemperatura(temp);
+        informacao.setVelVento(velVento);
 
-                return info;
-            }
-        } catch (Exception e) {
-            System.out.println("Erro!!!"+ e.getMessage());
-        }
-		return null;
+        return informacao;
+           
 	}
 }
