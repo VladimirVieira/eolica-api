@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -42,7 +43,7 @@ public class PartService {
             }
             return partRepository.save(partEntity);
         } else {
-            throw new RuntimeException("Part not found");
+            throw new NoSuchElementException("Part not found");
         }
     }
 
@@ -54,13 +55,13 @@ public class PartService {
     //Metodo para obter peça pelo id
     public PartEntity getPartById(long id) {
         Optional<PartEntity> part = partRepository.findById(id);
-        return part.orElseThrow(() -> new RuntimeException("Part not found"));
+        return part.orElseThrow(() -> new NoSuchElementException("Part not found"));
     }
 
     //Metodo para deletar peça pelo ID
     public PartEntity deletePart(long id) {
         Optional<PartEntity> part = partRepository.findById(id);
-        PartEntity partEntity = part.orElseThrow(() -> new RuntimeException("Part not found"));
+        PartEntity partEntity = part.orElseThrow(() -> new NoSuchElementException("Part not found"));
         partRepository.delete(partEntity);
         return partEntity;
     }
