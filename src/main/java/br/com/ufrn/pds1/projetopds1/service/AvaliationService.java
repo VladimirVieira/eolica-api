@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -46,7 +47,7 @@ public class AvaliationService {
             }
             return avaliationRepository.save(avaliationEntity);
         }else{
-            throw new RuntimeException("Avaliation not found");
+            throw new NoSuchElementException("Avaliation not found");
         }
 
     }
@@ -59,13 +60,17 @@ public class AvaliationService {
             avaliationRepository.delete(avaliationEntity);
             return avaliationEntity;
         }else {
-            throw new RuntimeException("Avaliation not found");
+            throw new NoSuchElementException("Avaliation not found");
         }
     }
 
     //Metodo getAll avaliação
     public List<AvaliationEntity> getAllAvaliation() {
-        return avaliationRepository.findAll();
+        if (avaliationRepository.findAll().isEmpty()) {
+            throw new NoSuchElementException("No Avaliation found");
+        }else {
+            return avaliationRepository.findAll();
+        }
     }
 
     //Metodo getById
@@ -74,7 +79,7 @@ public class AvaliationService {
         if (avaliation.isPresent()) {
             return avaliation.get();
         } else {
-            throw new RuntimeException("Avaliation not found");
+            throw new NoSuchElementException("Avaliation not found");
         }
     }
 }

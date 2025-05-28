@@ -13,11 +13,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({NoSuchElementException.class})
     private ResponseEntity<String> partNotFoundHandler(NoSuchElementException exception){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Part not found");
-    }
-
-    @ExceptionHandler({RuntimeException.class})
-    private ResponseEntity<String> avaliationNotFoundHandler(RuntimeException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
+
+
 }
