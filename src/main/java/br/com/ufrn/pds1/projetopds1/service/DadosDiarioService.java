@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
@@ -13,11 +14,14 @@ import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempo;
 
 @Service
 public class DadosDiarioService {
+	@Autowired
+    private ComunicacaoComApiExternacao apiExterna;
 
 //************************************************************************************************************************************	
 	//Obtem o intervalo de data para emitir o histórico
 	public List<String> obterIntervaloDeData() {
-	    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	   
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	    LocalDate coletaDataAtual = LocalDate.now(); 
 
 	    LocalDate anoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 1, 1);
@@ -49,20 +53,15 @@ public class DadosDiarioService {
 	
 	//Extraindo dados da open-meteo
 	public Map<String, Object>extrairDadosApi(String url){
-			//Fazendo requisição HTTP
-			RestTemplate restTemplate = new RestTemplate();
-		
-		
-			Map<String, Object> resp = restTemplate.getForObject(url, Map.class);
-			Map<String, Object> daily = (Map<String, Object>) resp.get("daily");
-			return daily;
+	
+			return apiExterna.extrairDadosApi(url);
 			
 	}
 	
 //************************************************************************************************************************************
 		public DadosDiariosHistorico instanciarDadosDiario(Double latitude, Double longitude,Map<String, Object> daily) {
-			//armazenando dados
 			
+			//armazenando dados
 			DadosDiariosHistorico armazemDados = new DadosDiariosHistorico();
 			
 			armazemDados.setData((List<String>) daily.get("time"));
@@ -78,6 +77,7 @@ public class DadosDiarioService {
 //************************************************************************************************************************************
 		//Calcular Média Temperatura
 		public List<Double> calcularTemperaturaMedia(List<Double> tempMaior, List<Double> tempMenor){
+			
 			List<Double> mediasPorDia = new ArrayList<>();
 			
 			for (int i = 0; i < tempMaior.size(); i++) {
@@ -90,6 +90,7 @@ public class DadosDiarioService {
 //************************************************************************************************************************************
 		//Calcular velocidade média do Vento por trimestres
 		public DadosDiariosHistorico calcularVelocidadeVento(List<String> datasAno, List<Double> ventos, DadosDiariosHistorico armazemDados){
+			
 			double primeiroTri = 0, segundoTri=0, terceiroTri=0, quartoTri=0;
 			int cont1Tri=0, cont2Tri=0, cont3Tri=0, cont4Tri=0;
 			

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,6 +16,8 @@ import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempo;
 
 @Service
 public class PrevisaoTempoService {
+	@Autowired
+    private ComunicacaoComApiExternacao apiExterna;
 	
 	//*********************************************************************************************************************
 	//Definindo o intervalo de datas 
@@ -35,8 +38,6 @@ public class PrevisaoTempoService {
 	//Constroi a URL
 	public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
 		
-	
-				
 		return  String.format("https://archive-api.open-meteo.com/v1/archive"
 				+ "?latitude=%s"
 				+ "&longitude=%s"
@@ -49,12 +50,8 @@ public class PrevisaoTempoService {
 	//***********************************************************************************************************************
 	//Extraindo dados da open-meteo
 	public Map<String, Object>obterDadosApi(String url){
-			//Fazendo requisição HTTP
-			RestTemplate restTemplatePrevisao = new RestTemplate();
-				
-			Map<String, Object> respPrevisao = restTemplatePrevisao.getForObject(url, Map.class);
-			Map<String, Object> dailyPrevisao = (Map<String, Object>) respPrevisao.get("daily");
-			return dailyPrevisao;
+			
+			return apiExterna.extrairDadosApi(url);
 		
 	}
 
@@ -75,6 +72,7 @@ public class PrevisaoTempoService {
 	//************************************************************************************************************************
 	//Previsão de vento para 7 dias 
 	public  Map<String, List<Double>> processarDados(PrevisaoTempo armazemDadosPrevisao, Map<String, Object> dailyPrevisao) {
+				
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				LocalDate coletaData = LocalDate.now(); 
 				
@@ -151,6 +149,7 @@ public class PrevisaoTempoService {
 	//******************************************Previsão do tempo***************************************************************
 
 	public List<Alertas> verificarAlertas(PrevisaoTempo infoPrev) {
+		
 		List<Alertas> informacao = new ArrayList<>();
 		List<Double> tempMaxPrevisao = infoPrev.getTempMaxPrevisao();
 		List<Double> tempMinPrevisao = infoPrev.getTempMinPrevisao();

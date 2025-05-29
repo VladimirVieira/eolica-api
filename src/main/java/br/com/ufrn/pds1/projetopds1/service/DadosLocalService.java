@@ -3,6 +3,7 @@ package br.com.ufrn.pds1.projetopds1.service;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,12 +12,12 @@ import br.com.ufrn.pds1.projetopds1.model.DadosLocal;
 @Service
 public class DadosLocalService {
 	
+	@Autowired
+	private ComunicacaoComApi comunicaoApi;
 	//**********************************************************************************************************************
 		//Constroi a URL
 		public String construirUrl(String latitude, String longitude, String data) {
-			
-		
-					
+						
 			return  String.format(
 					"https://api.open-meteo.com/v1/forecast?"
 					+ "latitude=%s&"
@@ -28,17 +29,15 @@ public class DadosLocalService {
 	//**********************************************************************************************************************	
 	//Extraindo dados da open-meteo
 	public Map<String, Object>obterDadosDaApi(String url){
-		//Fazendo requisição HTTP
-		RestTemplate restTemplate = new RestTemplate();
-		Map<String, Object> resposta = restTemplate.getForObject(url, Map.class);
-		Map<String, Object> hourly = (Map<String, Object>) resposta.get("hourly");
-		return hourly;
+		
+		return comunicaoApi.obterDadosDaApi(url);
 			
 	}
 			
 	//**********************************************************************************************************************
 	//Método para obter dados de temperatura do dia
 	public Double obterDadosTemperatura(Map<String, Object> hourly){
+		
 		List<Double> temperaturas = (List<Double>) hourly.get("temperature_2m");
 		return temperaturas.get(18);
 		
@@ -47,7 +46,8 @@ public class DadosLocalService {
 	//**********************************************************************************************************************
 	//Método para obter dados de temperatura do dia
 	public Double obterDadosVentos(Map<String, Object> hourly){
-        List<Double> ventos = (List<Double>) hourly.get("windspeed_10m");
+        
+		List<Double> ventos = (List<Double>) hourly.get("windspeed_10m");
 		return ventos.get(18);
 		
 	}
