@@ -21,10 +21,10 @@ public class DadosHistoricosController {
     public String obterEArmazenar() {
     	return "historicoprevisao";
     }
-    
+     
     @GetMapping("/dadoshistorico")
     public String obterEArmazenar(@RequestParam double lat, @RequestParam double lon, Model hmodel) {
-    	DadosDiariosHistorico historico = service.armazenarDados(lat, lon, null, null);
+    	DadosDiariosHistorico historico = service.armazenarDados(lat, lon);
     	hmodel.addAttribute("hist", historico);
     	return "historicoprevisao_resposta";
     }

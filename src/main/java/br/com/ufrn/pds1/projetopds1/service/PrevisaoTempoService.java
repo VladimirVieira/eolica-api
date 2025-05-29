@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
 import br.com.ufrn.pds1.projetopds1.model.Alertas;
 import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempo;
 
@@ -50,14 +52,23 @@ public class PrevisaoTempoService {
 	//***********************************************************************************************************************
 	//Extraindo dados da open-meteo
 	public Map<String, Object>obterDadosApi(String url){
-			
+		
+		try {
 			return apiExterna.extrairDadosApi(url);
+		}catch (Exception e) {
+			throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+		}
+			
 		
 	}
 
 	//************************************************************************************************************************
 	public PrevisaoTempo instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao) {
 		//armazenando dados
+		if (dailyPrevisao == null) {
+			throw new DadosInvalidosException("Apresenta dados inválidos");
+		}
+		
 		PrevisaoTempo armazemDadosPrevisao = new PrevisaoTempo();
 				
 		armazemDadosPrevisao.setData((List<String>) dailyPrevisao.get("time"));
@@ -72,6 +83,11 @@ public class PrevisaoTempoService {
 	//************************************************************************************************************************
 	//Previsão de vento para 7 dias 
 	public  Map<String, List<Double>> processarDados(PrevisaoTempo armazemDadosPrevisao, Map<String, Object> dailyPrevisao) {
+		
+				if (dailyPrevisao == null) {
+					throw new DadosInvalidosException("Apresenta dados inválidos");
+				}
+		
 				
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 				LocalDate coletaData = LocalDate.now(); 
@@ -127,6 +143,14 @@ public class PrevisaoTempoService {
 	
 	//***************************************************************************************************************************
 	public PrevisaoTempo armazenarDadosPrevisao(double latitude, double longitude) {
+		
+		if (Double.isNaN(latitude) || Double.isNaN(longitude)) {
+		    throw new DadosInvalidosException("os valores de Latitude ou longitude não são numéricos.");
+		} else if(latitude<-90 || latitude>90) {
+			throw new DadosInvalidosException("Os dados de latitude são inválidos, pois o intervalo válido compreende:[-90,90].");
+		} else if(longitude<-180 || longitude>180) {
+			throw new DadosInvalidosException("Os dados de longitude são inválidos, pois o intervalo válido compreende:[-180,180].");
+		}
 		
 		List<String> data = obterData();
 		String dataAtual = data.get(0);

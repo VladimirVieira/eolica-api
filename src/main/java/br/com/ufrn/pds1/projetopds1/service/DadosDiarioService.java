@@ -9,6 +9,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
 import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
 import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempo;
 
@@ -53,13 +56,22 @@ public class DadosDiarioService {
 	
 	//Extraindo dados da open-meteo
 	public Map<String, Object>extrairDadosApi(String url){
-	
+		
+		try {
 			return apiExterna.extrairDadosApi(url);
-			
+		}catch (Exception e) {
+			throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+		}
+	
+
 	}
 	
 //************************************************************************************************************************************
 		public DadosDiariosHistorico instanciarDadosDiario(Double latitude, Double longitude,Map<String, Object> daily) {
+			
+			if (daily == null) {
+				throw new DadosInvalidosException("Apresenta dados inválidos");
+			}
 			
 			//armazenando dados
 			DadosDiariosHistorico armazemDados = new DadosDiariosHistorico();
@@ -78,6 +90,10 @@ public class DadosDiarioService {
 		//Calcular Média Temperatura
 		public List<Double> calcularTemperaturaMedia(List<Double> tempMaior, List<Double> tempMenor){
 			
+			if(tempMaior == null || tempMenor == null || tempMaior.isEmpty() || tempMenor.isEmpty()) {
+				throw new DadosInvalidosException("As listas são inválidas/vazias");
+			}
+			
 			List<Double> mediasPorDia = new ArrayList<>();
 			
 			for (int i = 0; i < tempMaior.size(); i++) {
@@ -90,6 +106,12 @@ public class DadosDiarioService {
 //************************************************************************************************************************************
 		//Calcular velocidade média do Vento por trimestres
 		public DadosDiariosHistorico calcularVelocidadeVento(List<String> datasAno, List<Double> ventos, DadosDiariosHistorico armazemDados){
+			
+			if(datasAno == null || ventos == null) {
+				throw new DadosInvalidosException("As listas são inválidas/vazias");
+			}else if(armazemDados == null){
+				throw new DadosInvalidosException("Dados inválidos");
+			}
 			
 			double primeiroTri = 0, segundoTri=0, terceiroTri=0, quartoTri=0;
 			int cont1Tri=0, cont2Tri=0, cont3Tri=0, cont4Tri=0;
@@ -125,7 +147,16 @@ public class DadosDiarioService {
 	
 //************************************************************************************************************************************
 		
-		public DadosDiariosHistorico armazenarDados(double latitude, double longitude, String dataInic, String dataFin) {		
+		public DadosDiariosHistorico armazenarDados(double latitude, double longitude) {	
+			
+			
+			if (Double.isNaN(latitude) || Double.isNaN(longitude)) {
+			    throw new DadosInvalidosException("os valores de Latitude ou longitude não são numéricos.");
+			} else if(latitude<-90 || latitude>90) {
+				throw new DadosInvalidosException("Os dados de latitude são inválidos, pois o intervalo válido compreende:[-90,90].");
+			} else if(longitude<-180 || longitude>180) {
+				throw new DadosInvalidosException("Os dados de longitude são inválidos, pois o intervalo válido compreende:[-180,180].");
+			}
 			
 			List<String> dataIntervalo = obterIntervaloDeData();
 			String dataInicio = dataIntervalo.get(0);
@@ -135,8 +166,8 @@ public class DadosDiarioService {
 			DadosDiariosHistorico armazemDados = instanciarDadosDiario(latitude, longitude, daily);
 			
 			//obtem dados de temperatura e velocidade do vento
-			List<Double> tempMaior = (List<Double>) daily.get("temperature_2m_min");
-			List<Double> tempMenor = (List<Double>) daily.get("temperature_2m_max");
+			List<Double> tempMaior = (List<Double>) daily.get("temperature_2m_max");
+			List<Double> tempMenor = (List<Double>) daily.get("temperature_2m_min");
 			List<Double> ventos = (List<Double>) daily.get("windspeed_10m_max");
 			List<String> datasAno = (List<String>) daily.get("time");
 			List<Double> mediasPorDia = calcularTemperaturaMedia(tempMaior, tempMenor);
@@ -145,3 +176,4 @@ public class DadosDiarioService {
 
 		}
 }
+ 
