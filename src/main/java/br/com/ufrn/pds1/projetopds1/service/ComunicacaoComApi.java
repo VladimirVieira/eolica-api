@@ -15,6 +15,6 @@ public class ComunicacaoComApi {
 			Map<String, Object> resposta = restTemplate.getForObject(url, Map.class);
 			Map<String, Object> hourly = (Map<String, Object>) resposta.get("hourly");
 			return hourly;
-				
+			//Refatorar hora/dia
 		}
 }

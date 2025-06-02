@@ -4,6 +4,7 @@ import br.com.ufrn.pds1.projetopds1.model.DocumentEntity;
 import br.com.ufrn.pds1.projetopds1.repository.DocumentRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,7 +28,7 @@ public class DocumentService {
         }
 
         //Capturando nome do arquivo e caminho de destino
-        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
         Path path = Paths.get("src/main/resources/static/uploads/" + filename);
 
         //Transferindo documento para a pasta uploads
@@ -41,6 +42,7 @@ public class DocumentService {
         document.setName(file.getOriginalFilename());
         document.setPath(destination);
         documentRepository.save(document);
+
 
         return destination;
     }

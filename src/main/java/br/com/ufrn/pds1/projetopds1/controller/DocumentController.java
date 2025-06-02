@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+
 @RestController
 @RequestMapping("document")
 public class DocumentController {
@@ -23,20 +24,20 @@ public class DocumentController {
     private DocumentService documentService;
 
     @PostMapping("upload")
-    public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file) {
-        try{
+    public ResponseEntity<String> uploadDocument(@RequestParam("file") MultipartFile file) throws IOException {
+
             String path = documentService.saveDocument(file);
             return ResponseEntity.ok("Documento salvo com sucesso! " + path );
-        } catch (IllegalArgumentException | IOException e) {
-            return ResponseEntity.badRequest().body("Erro ao tentar salvar o arquivo!" + e.getMessage());
-        }
+
     }
+
 
     @GetMapping("download/{filename}")
     public ResponseEntity<Resource> downloadDocument(@PathVariable String filename) throws MalformedURLException {
         Path path = Paths.get("src/main/resources/static/uploads/" + filename);
         Resource recurso = new UrlResource(path.toUri());
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"").body(recurso);
+
     }
 
 }

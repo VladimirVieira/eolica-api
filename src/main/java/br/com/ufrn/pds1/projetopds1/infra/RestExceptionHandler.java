@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
@@ -17,7 +18,19 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
-    private ResponseEntity<String> documentNotUploadHandler(IOException exception){
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> handleIOException(IOException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error trying save document: " + ex.getMessage());
+    }
+
+    @ExceptionHandler({FileNotFoundException.class})
+    private ResponseEntity<String> fileNotFoundHandler(FileNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+    }
+
+    @ExceptionHandler({IllegalArgumentException.class})
+    private ResponseEntity<String> illegalArgumentExceptionHandler(IllegalArgumentException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
