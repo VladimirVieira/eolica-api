@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>SisGPE - Resultado da Comparação</title>
+    <link rel="stylesheet" type="text/css" href="../estilo.css" th:href="@{/estilo.css}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #084808;
+        }
+    </style>
+</head>
+<body>
+<div id="area-cabecalho">
+    <div id="area-logo">
+        <h1>SisG<span class="branco">PE</span></h1>
+    </div>
+    <div id="area-menu">
+        <a href="/" th:href="@{/}">Dados Local</a>
+        <a href="/historico1" th:href="@{/historico1}">Histórico</a>
+        <a href="/previsaosemana" th:href="@{/previsaosemana}">Previsão Semanal</a>
+        <a href="/previsaoalerta" th:href="@{/previsaoalerta}">Alertas</a>
+        <a href="/comparacao-meteorologica/form" th:href="@{/comparacao-meteorologica/form}">Comparar Locais</a>
+    </div>
+</div>
+
+<div id="area-principal">
+    <div id="area-postagens">
+        <div class="postagem" th:if="${resultadosComparacao != null}">
+            <h2>Resultados da Comparação Meteorológica Trimestral (Velocidade Média do Vento km/h)</h2>
+            <br>
+            <table>
+                <thead>
+                <tr>
+                    <th>Métrica Trimestral</th>
+                    <th th:text="${resultadosComparacao.local1.identificador}">Local 1</th>
+                    <th th:text="${resultadosComparacao.local2.identificador}">Local 2</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Média de Vento - 1º Trimestre</td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local1.mediaVentoTrimestre1, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local2.mediaVentoTrimestre1, 1, 2)}"></td>
+                </tr>
+                <tr>
+                    <td>Média de Vento - 2º Trimestre</td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local1.mediaVentoTrimestre2, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local2.mediaVentoTrimestre2, 1, 2)}"></td>
+                </tr>
+                <tr>
+                    <td>Média de Vento - 3º Trimestre</td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local1.mediaVentoTrimestre3, 1, 2)}"></td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local2.mediaVentoTrimestre3, 1, 2)}"></td>
+                </tr>
+                <tr>
+                    <td>Média de Vento - 4º Trimestre</td>
+                    <td th:text="${#numbers.formatDecimal(resultadosComparacao.local1.mediaVentoTrimestre4, 1, 2)}"></td> <td th:text="${#numbers.formatDecimal(resultadosComparacao.local2.mediaVentoTrimestre4, 1, 2)}"></td> </tr>
+                </tbody>
+            </table>
+            <br>
+            <a href="/comparacao-meteorologica/form" th:href="@{/comparacao-meteorologica/form}"><button>Nova Comparação</button></a>
+        </div>
+
+        <div class="postagem" th:if="${erro != null}">
+            <p th:text="${erro}"></p>
+        </div>
+    </div>
+    <div id="rodape">
+        <strong>SisGPE</strong>
+    </div>
+</div>
+</body>
+</html>
