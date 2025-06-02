@@ -33,8 +33,8 @@ Para se ter uma melhor compreensão acerca de fontes de energia renováveis, con
 
 - [X]    __#Crud Document*__
 
-- [X]    __#Crud Armazenar Local*__
+- [X]    __#Crud Armazenar Local__
 
-- [X]    __#Comparar dois locais*__
+- [X]    __#Comparar dois locais__
 
 
