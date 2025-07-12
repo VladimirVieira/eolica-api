@@ -37,8 +37,7 @@ public abstract class DadosDiarioServiceTemplate {
 		    intervalo.add(dataFim);
 
 		    return intervalo;
-		    
-		    //continua
+	
 		}
 		
 //*********************************************************************************************************************************************************************
