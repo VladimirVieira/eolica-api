@@ -38,11 +38,11 @@ public abstract class DadosDiarioServiceTemplate {
 
 		    return intervalo;
 		    
-		    //continua
+		 
 		}
 		
 //*********************************************************************************************************************************************************************
-	//Constroi a URL
+	
 	    protected abstract String montarUrl(double latitude, double longitude, String dataInicio, String dataFim);
 	    
 //*********************************************************************************************************************************************************************
@@ -62,11 +62,11 @@ public abstract class DadosDiarioServiceTemplate {
 		protected abstract DadosDiarioHistoricoModel instanciarDadosDiario(Double latitude, Double longitude,Map<String, Object> daily);
 	
 //********************************************************************************************************************************************************************
-		//Calcular Média Temperatura
+		
 		protected abstract List<Double> calcularFatorClimatico1(List<Double> fator1, List<Double> fator2);
 			
 //********************************************************************************************************************************************************************
-	   //Calcular velocidade média do Vento por trimestres
+
 		protected abstract DadosDiarioHistoricoModel calcularFatorClimatico2(List<String> datasAno, List<Double> fator, DadosDiarioHistoricoModel armazemDados);
 
 //********************************************************************************************************************************************************************
