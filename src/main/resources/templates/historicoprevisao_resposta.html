@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>SisGPE</title>
+	<title>SisGUrbanClima</title>
 	<meta charset="utf-8">
 	<link rel="stylesheet" type="text/css" href="../estilo.css">
 	
@@ -11,7 +11,7 @@
 	<div id="area-cabecalho">
 		
 		<div id="area-logo">
-			<h1>SisG<span class="branco">PE</span></h1>
+			<h1>SisG<span class="branco">UrbanClima</span></h1>
 		</div>
 		<div id="area-menu">
 			<a href="/">Dados Local</a>
@@ -27,7 +27,7 @@
 			<h2>Consultar histórico</h2>
 		<br>
 	<div class="postagem">
-    	<canvas id="graficoTemperaturas" width="400" height="250"></canvas>
+    	<canvas id="graficoRadiacao" width="400" height="250"></canvas>
    	</div>
 
 	<div class="postagem">
@@ -39,27 +39,21 @@
 
 	<script th:inline="javascript">
 	
-    	// Obtem Gráfico de linha para temperaturas máxima e mínima
-    	const ctxTemp = document.getElementById('graficoTemperaturas').getContext('2d');
+    	// Obtem Gráfico de linha para radiacao
+    	const ctxTemp = document.getElementById('graficoRadiacao').getContext('2d');
     	const chartTemp = new Chart(ctxTemp, {
         	type: 'line',
         	data: {
             	labels: [[${hist.data}]], // datas
             	datasets: [
                 	{
-                    	label: 'Temperatura Máxima',
+                    	label: 'Radiacao',
                     	borderColor: 'rgb(255, 99, 132, 1)',
-                    	data: [[${hist.tempMax}]],
+                    	data: [[${hist.fator1}]],
                     	fill: false,
                     	tension: 0.1
                 	},
-                	{
-                    	label: 'Temperatura Mínima',
-                    	borderColor: 'rgba(0, 64, 0, 0.7)',
-                    	data: [[${hist.tempMin}]],
-                    	fill: false,
-                    	tension: 0.1
-                	}
+      
             	]
         	},
         	options: {
@@ -70,14 +64,14 @@
         	}
     	});
 
-    // Obtem Gráfico de barras relativo médias trimestrais de vento
+    // Obtem Gráfico de barras relativo médias trimestrais de chuva
     	const ctxTri = document.getElementById('graficoTrimestres').getContext('2d');
     	const graficoTrimestres = new Chart(ctxTri, {
         	type: 'bar',
         	data: {
             	labels: ['1º Trimestre', '2º Trimestre', '3º Trimestre', '4º Trimestre'],
             	datasets: [{
-                	label: 'Média Vento (m/s)',
+                	label: 'Média de chuvas',
                 	data: [
                     		[[${hist.primeiroTrimestre}]],
                    			[[${hist.segundoTrimestre}]],
@@ -100,7 +94,7 @@
 		</div>
 
 		<div id="rodape">
-			<strong>SisGPE</strong>
+			<strong>SisGUrbanClima</strong>
 		</div>
 
 	</div>
