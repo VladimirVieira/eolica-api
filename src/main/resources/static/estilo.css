@@ -7,14 +7,14 @@
 body {
 	font-size: 1em;
 	font-family: "Trebuchet MS", Helvetica, sans-serif;
-	background: #e6e6e6;
+	background:  #800000;;
 }
 
 /*
 **** Layout ****
 */
 #area-cabecalho {
-	background-color: #084808;
+	background-color: #000000;;
 	padding: 15px;
 	text-align: center;
 }
@@ -79,12 +79,12 @@ a:hover {
 **** Formatações em geral ****
 */
 h1 {
-	color: #4e4e4e;
+	color: #666666; /* cinza médio */
 	font-size: 2.5em;
 }
 
 h2 {
-	color: #084808;
+	color: #888888; /* cinza mais claro */
 }
 
 h3 {
