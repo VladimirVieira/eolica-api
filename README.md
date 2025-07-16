@@ -1,8 +1,7 @@
 # Projeto da disciplina de PDS
 
-Devido a ocorrência do blecaute de 2001, a questão da oferta de energia elétrica passou a ser considerada um ponto de preocupação para o Governo Federal, uma vez que ficou notório a fragilidade do setor e a necessidade de sua reestruturação, sendo inclusive durante este periodo criado o programa PROEOLICA o qual foi caracterizado como um programa de incentivo a fontes renováveis.  
-Para se ter uma melhor compreensão acerca de fontes de energia renováveis, considere que a energia eólica é a energia cinética contida nas massas de ar, e para ocorrer o seu aproveitamento, a energia cinética dos ventos é convertida em energia cinética de rotação de turbinas eólicas que resultam em energia elétrica. Agora, diante desse contexto, e considerando que a implantação de Parques Eólicos ainda é algo muito recente no Brasil, o presente trabalho visa desenvolver um sistema de gerenciamento de parque eólico que engloba a fase de pré-construção e operação.
-
+O sistema de gerenciamento agrícola é uma ferramenta tecnológica projetada para otimizar as operações relacionadas a uma plantação, desde o planejamento da safra até a colheita. Esse sistemas auxilia no monitoramento do clima, uma vez que o mesmo 
+pode afetar a produtividade.
 
 # Executando a API via terminal:
 
