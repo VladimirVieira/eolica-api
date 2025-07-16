@@ -18,10 +18,8 @@ import br.com.ufrn.pds1.projetopds1.service.DadosDiarioService;
 public class DadosHistoricosController {
 
     @Autowired
-    //private DadosDiarioService service;
-    //private DadosDiarioEolicoService service;
-    //private DadosDiarioClimaUrbanoService service;
-    private DadosDiarioAgriculturaService service;
+    private DadosDiarioService service;
+    
    
     // Consulta e armazena novo histórico
     @GetMapping("/historico1")
