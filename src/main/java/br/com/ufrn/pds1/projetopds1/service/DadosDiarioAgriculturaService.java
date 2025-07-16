@@ -33,7 +33,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
             latitude, longitude, dataInicio, dataFim
         );
     }
-
+//*****************************************************************************************************************************************************************************************************
     @Override
     protected Map<String, Object> extrairDadosApi(String url) {
         try {
@@ -42,6 +42,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
             throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API", e);
         }
     }
+//****************************************************************************************************************************************************************************************************
 
     @Override
     public DadosDiarioHistoricoModel instanciarDadosDiario(Double latitude, Double longitude, Map<String, Object> hourly) {
@@ -73,7 +74,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
         dados.setLocal("Latitude:" + latitude + " Longitude:" + longitude);
         return dados;
     }
-
+//******************************************************************************************************************************************************************************************************
     private Map<String, Object> extrairMediasDiarias(Map<String, List<Double>> mapaPrecipitacaoPorDia, Map<String, List<Double>> mapaRadiacaoPorDia) {
         List<Double> fator1 = new ArrayList<>();
         List<Double> fator2 = new ArrayList<>();
@@ -103,6 +104,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
         resultado.put("fator2", fator2); // List<Double>
         return resultado;
     }
+//********************************************************************************************************************************************************************************************************
 
     @Override
     public List<Double> calcularFatorClimatico1(List<Double> fator1, List<Double> fator2) {
@@ -112,6 +114,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
         return fator1;
     }
 
+//*******************************************************************************************************************************************************************************************************
     @Override
     public DadosDiarioHistoricoModel calcularFatorClimatico2(List<String> datasAno, List<Double> fator, DadosDiarioHistoricoModel armazemDados) {
         double primeiroTri = 0, segundoTri = 0, terceiroTri = 0, quartoTri = 0;
@@ -140,7 +143,7 @@ public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
         armazemDados.setQuartoSemestre(quartoTri/90);
         return armazemDados;
     }
-
+//********************************************************************************************************************************************************************************************************
     @Override
     public DadosDiarioHistoricoModel armazenarDados(double latitude, double longitude) {
         validarLatitudeLongitude(latitude, longitude);
