@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SisGAgri</title>
+    <link rel="stylesheet" type="text/css" href="../estilo.css">
+</head>
+<body>
+
+    <div id="area-cabecalho">
+        <div id="area-logo">
+            <h1>SisG<span class="branco">Agri</span></h1>
+        </div>
+        <div id="area-menu">
+            <a href="/">Dados Local</a>
+            <a href="/historico1">Histórico</a>
+            <a href="/previsaosemana">Previsão semanal</a>
+            <a href="/previsaoalerta">Alertas</a>
+        </div>
+    </div>
+
+    <div id="area-principal">
+        <div id="area-postagens">
+        
+            <!-- resultado da consulta -->
+            <div class="postagem" th:if="${clima != null}">
+                <h2>Resultado Meteorológico</h2>
+                <br>
+                <p><strong>Data:</strong> <input type="text" th:value="${clima.data}" readonly></p><br>
+                <p><strong>Precipitacao:</strong> <input type="text" th:value="${clima.fator1}" readonly></p><br>
+                <p><strong>Radiacao:</strong> <input type="text" th:value="${clima.fator2}" readonly></p><br>
+                <p><strong>Latitude:</strong> <input type="text" th:value="${clima.latitude}" readonly></p><br>
+                <p><strong>Longitude:</strong> <input type="text" th:value="${clima.longitude}" readonly></p><br>
+
+                <a href="/"><button>Voltar</button></a>
+            </div>
+
+            <div class="postagem" th:if="${erro != null}">
+                <p th:text="${erro}">Erro ao consultar os dados.</p>
+            </div>
+            <!--// fim do resultado -->	
+        </div>
+
+        <div id="rodape">
+            <strong>SisGAgri</strong>
+        </div>
+    </div>
+
+</body>
+</html>
