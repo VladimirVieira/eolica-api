@@ -1,7 +1,8 @@
 # Projeto da disciplina de PDS
 
-Devido a ocorrência do blecaute de 2001, a questão da oferta de energia elétrica passou a ser considerada um ponto de preocupação para o Governo Federal, uma vez que ficou notório a fragilidade do setor e a necessidade de sua reestruturação, sendo inclusive durante este periodo criado o programa PROEOLICA o qual foi caracterizado como um programa de incentivo a fontes renováveis.  
-Para se ter uma melhor compreensão acerca de fontes de energia renováveis, considere que a energia eólica é a energia cinética contida nas massas de ar, e para ocorrer o seu aproveitamento, a energia cinética dos ventos é convertida em energia cinética de rotação de turbinas eólicas que resultam em energia elétrica. Agora, diante desse contexto, e considerando que a implantação de Parques Eólicos ainda é algo muito recente no Brasil, o presente trabalho visa desenvolver um sistema de gerenciamento de parque eólico que engloba a fase de pré-construção e operação.
+O monitoramento do clima urbano envolve a coleta, análise e interpretação de dados meteorológicos para entender e prever as condições climáticas em áreas urbanas. Assim, esse sistema
+inclui o estudo de fenômenos como ilhas de calor urbanas, onde a temperatura é mais alta nas cidades do que nas áreas rurais circundantes, devido à influência de fatores como materiais de construção e padrões de vento. 
+
 
 
 # Executando a API via terminal:
