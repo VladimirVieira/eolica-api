@@ -1,0 +1,160 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+import br.com.ufrn.pds1.projetopds1.model.DadosDiarioHistoricoModel;
+import org.springframework.stereotype.Service;
+
+@Service
+public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate {
+
+    @Autowired
+    private ComunicacaoComApiExternacao apiExterna;
+
+    @Override
+    public String montarUrl(double latitude, double longitude, String dataInicio, String dataFim) {
+        return String.format(
+            "https://archive-api.open-meteo.com/v1/archive"
+            + "?latitude=%s"
+            + "&longitude=%s"
+            + "&start_date=%s"
+            + "&end_date=%s"
+            + "&hourly=precipitation,shortwave_radiation"
+            + "&timezone=America/Fortaleza",
+            latitude, longitude, dataInicio, dataFim
+        );
+    }
+
+    @Override
+    protected Map<String, Object> extrairDadosApi(String url) {
+        try {
+            return apiExterna.obterDadosDaApi(url);
+        } catch (Exception e) {
+            throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API", e);
+        }
+    }
+
+    @Override
+    public DadosDiarioHistoricoModel instanciarDadosDiario(Double latitude, Double longitude, Map<String, Object> hourly) {
+        if (hourly == null) {
+            throw new DadosInvalidosException("Apresenta dados inválidos");
+        }
+
+        List<String> horarios = (List<String>) hourly.get("time");
+        List<Double> precipitacoes = (List<Double>) hourly.get("precipitation");
+        List<Double> radiacoes = (List<Double>) hourly.get("shortwave_radiation");
+
+        Map<String, List<Double>> mapaPrecipitacaoPorDia = new LinkedHashMap<>();
+        Map<String, List<Double>> mapaRadiacaoPorDia = new LinkedHashMap<>();
+
+        for (int i = 0; i < horarios.size(); i++) {
+            LocalDateTime dt = LocalDateTime.parse(horarios.get(i));
+            String dia = dt.toLocalDate().toString();
+
+            mapaPrecipitacaoPorDia.computeIfAbsent(dia, k -> new ArrayList<>()).add(precipitacoes.get(i));
+            mapaRadiacaoPorDia.computeIfAbsent(dia, k -> new ArrayList<>()).add(radiacoes.get(i));
+        }
+
+        Map<String, Object> medias = extrairMediasDiarias(mapaPrecipitacaoPorDia, mapaRadiacaoPorDia);
+
+        DadosDiarioHistoricoModel dados = new DadosDiarioHistoricoModel();
+        dados.setData((List<String>) medias.get("datas"));
+        dados.setFator1((List<Double>) medias.get("fator1"));
+        dados.setFator2((List<Double>) medias.get("fator2"));
+        dados.setLocal("Latitude:" + latitude + " Longitude:" + longitude);
+        return dados;
+    }
+
+    private Map<String, Object> extrairMediasDiarias(Map<String, List<Double>> mapaPrecipitacaoPorDia, Map<String, List<Double>> mapaRadiacaoPorDia) {
+        List<Double> fator1 = new ArrayList<>();
+        List<Double> fator2 = new ArrayList<>();
+        List<String> datas = new ArrayList<>();
+
+        for (String dia : mapaPrecipitacaoPorDia.keySet()) {
+            List<Double> precs = mapaPrecipitacaoPorDia.get(dia);
+            List<Double> rads = mapaRadiacaoPorDia.get(dia);
+
+            double mediaPrec = 0.0;
+            if (precs != null && precs.size() > 19) {
+                double p10 = precs.get(10) * 1.1;
+                double p14 = precs.get(14) * 1.3;
+                double p19 = precs.get(19) * 0.6;
+                mediaPrec = (p10 + p14 + p19) / 3.0;
+            }
+            fator1.add(mediaPrec);
+
+            double rad14 = (rads != null && rads.size() > 14) ? rads.get(14) : 0.0;
+            fator2.add(rad14);
+            datas.add(dia);
+        }
+
+        Map<String, Object> resultado = new LinkedHashMap<>();
+        resultado.put("datas", datas);   // List<String>
+        resultado.put("fator1", fator1); // List<Double>
+        resultado.put("fator2", fator2); // List<Double>
+        return resultado;
+    }
+
+    @Override
+    public List<Double> calcularFatorClimatico1(List<Double> fator1, List<Double> fator2) {
+        if (fator1 == null || fator1.isEmpty()) {
+            throw new DadosInvalidosException("Lista de fator1 vazia ou nula.");
+        }
+        return fator1;
+    }
+
+    @Override
+    public DadosDiarioHistoricoModel calcularFatorClimatico2(List<String> datasAno, List<Double> fator, DadosDiarioHistoricoModel armazemDados) {
+        double primeiroTri = 0, segundoTri = 0, terceiroTri = 0, quartoTri = 0;
+        double dias = datasAno.size() / 4;
+
+        validarListas(datasAno, fator, armazemDados);
+
+        for (int i = 0; i < datasAno.size(); i++) {
+            LocalDate data = LocalDate.parse(datasAno.get(i));
+            int mesAtual = data.getMonthValue();
+
+            if (mesAtual >= 4 && mesAtual <= 6) {
+                primeiroTri += ((fator.get(i)*0.3)/24);
+            } else if (mesAtual >= 7 && mesAtual <= 9) {
+                segundoTri += ((fator.get(i)*0.3)/24);
+            } else if (mesAtual >= 10 && mesAtual <= 12) {
+                terceiroTri += ((fator.get(i)*0.3)/24);
+            } else {
+                quartoTri += ((fator.get(i)*0.3)/24);
+            }
+        }
+
+        armazemDados.setPrimeiroTrimestre(primeiroTri/90);
+        armazemDados.setSegundoTrimestre(segundoTri/90);
+        armazemDados.setTerceiroTrimestre(terceiroTri/90);
+        armazemDados.setQuartoSemestre(quartoTri/90);
+        return armazemDados;
+    }
+
+    @Override
+    public DadosDiarioHistoricoModel armazenarDados(double latitude, double longitude) {
+        validarLatitudeLongitude(latitude, longitude);
+        List<String> dataIntervalo = obterIntervaloDeData();
+        String dataInicio = dataIntervalo.get(0);
+        String dataFim = dataIntervalo.get(1);
+        String url = montarUrl(latitude, longitude, dataInicio, dataFim);
+        Map<String, Object> hourly = extrairDadosApi(url);
+
+        DadosDiarioHistoricoModel armazemDados = instanciarDadosDiario(latitude, longitude, hourly);
+        List<Double> fator1Calculado = calcularFatorClimatico1(armazemDados.getFator1(), armazemDados.getFator2());
+        armazemDados.setFatorMedia(fator1Calculado);
+
+        return calcularFatorClimatico2(armazemDados.getData(), armazemDados.getFator2(), armazemDados);
+    }
+}
+
