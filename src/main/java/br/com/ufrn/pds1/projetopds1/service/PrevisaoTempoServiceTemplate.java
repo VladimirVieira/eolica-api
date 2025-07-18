@@ -1,0 +1,85 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+import br.com.ufrn.pds1.projetopds1.model.Alertas;
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempoModel;
+
+public abstract class PrevisaoTempoServiceTemplate {
+	@Autowired
+    private ComunicacaoComApiExternacao apiExterna;
+//*************************************************************************************************************************************************************************
+		//Definindo o intervalo de datas 
+		protected  ArrayList<String> obterData() {
+			
+					LocalDate dataHoje = LocalDate.now();
+					LocalDate data15AnosAtras = dataHoje.minusYears(15);
+					String dataAtual = dataHoje.toString();
+					String dataNormalizada = data15AnosAtras.toString();
+					ArrayList<String> data = new ArrayList<String>();
+					data.add(dataAtual);
+					data.add(dataNormalizada);
+					
+			return data; 
+		}
+		
+//*************************************************************************************************************************************************************************
+		//Constroi a URL
+		protected abstract String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual);
+		
+//*************************************************************************************************************************************************************************
+	//Extraindo dados da open-meteo
+		protected Map<String, Object>obterDadosApi(String url){
+			
+			try {
+				return apiExterna.extrairDadosApi(url);
+			}catch (Exception e) {
+				throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+			}
+				
+		}
+	
+//*************************************************************************************************************************************************************************
+		
+		protected abstract PrevisaoTempoModel instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao);
+		
+//*************************************************************************************************************************************************************************
+		
+		protected void validarObjeto(Map<String, Object> dailyPrevisao) {
+			if (dailyPrevisao == null) {
+				throw new DadosInvalidosException("Apresenta dados inválidos");
+			}
+		}
+		
+//*************************************************************************************************************************************************************************
+	//Previsão de vento para 7 dias 
+		protected abstract  Map<String, List<Double>> processarDados(PrevisaoTempoModel armazemDadosPrevisao, Map<String, Object> dailyPrevisao);
+		
+//*************************************************************************************************************************************************************************
+		protected abstract PrevisaoTempoModel armazenarDadosPrevisao(double latitude, double longitude);
+		
+//*************************************************************************************************************************************************************************	
+
+		protected void validarLatitudeLongitude(double latitude, double longitude) {
+		    if (Double.isNaN(latitude) || Double.isNaN(longitude)) {
+		        throw new DadosInvalidosException("Os valores de latitude ou longitude não são numéricos.");
+		    }
+		    if (latitude < -90 || latitude > 90) {
+		        throw new DadosInvalidosException("Os dados de latitude são inválidos. O intervalo válido é [-90, 90].");
+		    }
+		    if (longitude < -180 || longitude > 180) {
+		        throw new DadosInvalidosException("Os dados de longitude são inválidos. O intervalo válido é [-180, 180].");
+		    }
+		}
+		
+//******************************************Previsão do tempo**************************************************************************************************************
+
+		protected abstract List<Alertas> verificarAlertas(PrevisaoTempoModel infoPrev);
+}
