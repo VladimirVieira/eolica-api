@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SisGPE</title>
+    <link rel="stylesheet" type="text/css" href="../estilo.css">
+</head>
+<body>
+
+    <div id="area-cabecalho">
+        <div id="area-logo">
+            <h1>SisG<span class="branco">PE</span></h1>
+        </div>
+        <div id="area-menu">
+            <a href="/">Dados local</a>
+            <a href="/historico1">Historico</a>
+            <a href="/previsaosemana">Previsao semanal</a>
+            <a href="/previsaoalerta">Alertas</a>
+        </div>
+    </div>
+
+    <div id="area-principal">
+        <div id="area-postagens">
+
+
+            <!-- resultado da consulta -->
+            <div class="postagem" th:if="${listaAlertas != null and #lists.size(listaAlertas) > 0}">
+                <h2>Emitir alertas</h2>
+                <br>
+                
+				<ul>
+    				<li th:each="alerta : ${listaAlertas}">
+        			<strong th:text="${alerta.informacoesDia}"></strong>: 
+        			<span th:text="${alerta.classificacaoAlerta}"></span>
+    				</li>
+			  </ul>
+                
+                <br>
+                
+                <a href="/previsaoalerta"><button>Voltar</button></a>
+     
+            </div>
+
+            <div class="postagem" th:if="${erro != null}">
+                <p th:text="${erro}"></p>
+            </div>
+            <!--// fim do resultado -->
+			
+        </div>
+
+        <div id="rodape">
+            <strong>SisGPE</strong>
+        </div>
+    </div>
+
+</body>
+</html>
