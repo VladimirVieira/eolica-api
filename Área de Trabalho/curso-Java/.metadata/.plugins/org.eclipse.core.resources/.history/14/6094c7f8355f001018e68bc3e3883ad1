@@ -1,0 +1,19 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+public class PrevisaoTempoEolicaService extends PrevisaoTempoServiceTemplate{
+	//**********************************************************************************************************************
+		//Constroi a URL
+		public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
+			
+			return  String.format("https://archive-api.open-meteo.com/v1/archive"
+					+ "?latitude=%s"
+					+ "&longitude=%s"
+					+ "&start_date=%s"
+					+ "&end_date=%s"
+					+ "&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max"
+					+ "&timezone=America/Fortaleza",latitude, longitude, dataNormalizada, dataAtual);
+			
+			//muda
+		}
+
+}

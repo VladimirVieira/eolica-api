@@ -1,0 +1,6 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+public abstract class DadosLocalServiceTemplate {
+	//Constroi a URL
+	 protected abstract String construirUrl(String latitude, String longitude, String data);
+}

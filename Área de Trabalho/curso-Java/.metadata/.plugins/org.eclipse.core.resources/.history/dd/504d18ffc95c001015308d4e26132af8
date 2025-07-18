@@ -1,0 +1,33 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+//Classe abstrata base e nela foi utilizado o Método Template
+public abstract class DadosDiarioServiceTemplate {
+	
+	//************************************************************************************************************************************	
+		//Obtem o intervalo de data para emitir o histórico
+		protected List<String> obterIntervaloDeData() {
+		   
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    LocalDate coletaDataAtual = LocalDate.now(); 
+
+		    LocalDate anoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 1, 1);
+		    LocalDate fimAnoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 12, 31);
+
+		    String dataInicio = anoPassado.format(formatter);
+		    String dataFim = fimAnoPassado.format(formatter);
+
+		    List<String> intervalo = new ArrayList<>();
+		    intervalo.add(dataInicio);
+		    intervalo.add(dataFim);
+
+		    return intervalo;
+		    
+		    //continua
+		}
+
+}

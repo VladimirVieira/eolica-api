@@ -1,0 +1,44 @@
+package fundamentos;
+
+import java.util.Scanner;
+
+public class Console {
+	public static void main(String[] args) {
+		System.out.print("Bom");//devido usar print não tem qubra de linha
+		System.out.println(" dia \n\n");//para quebrar a linha usei \n
+		
+		System.out.println("Bom");
+		System.out.println("dia");//tem quebra de linha devido ser println
+		
+		System.out.printf("Megasena: %d %d %d %d %d %d \n", 1, 2, 3, 4, 4, 5);
+		
+		System.out.printf("Salário: %.1f%n", 1234.5678); //arredonda 
+		
+		Scanner entrada = new Scanner(System.in); //obtem informação do teclado
+		System.out.print("Digite o seu nome: ");
+		String nome = entrada.nextLine(); 
+		
+		System.out.println("Digite sua idade: ");
+		int idade = entrada.nextInt();
+		
+		System.out.printf("%s tem %d anos . %n",
+				nome, idade);
+		
+		entrada.close();
+		
+		//Quando for usar o nexInt siga o exemplo abaixo; serve também para nextDouble
+		
+	    Scanner teclado = new Scanner(System.in);
+	     
+        System.out.println("Qual a sua idade?");
+        int idade = teclado.nextInt();
+        teclado.nextLine(); //lê o "\\\\n" que o teclado.nextInt() deixa para trás.
+        System.out.println("Qual o seu nome?");
+        String nome = teclado.nextLine();
+        System.out.println("Qual o seu sobrenome?");
+        String sobrenome = teclado.nextLine();
+     
+        teclado.close();
+	}
+
+}

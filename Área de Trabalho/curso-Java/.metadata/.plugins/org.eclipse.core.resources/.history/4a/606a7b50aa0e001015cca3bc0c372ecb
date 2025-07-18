@@ -1,0 +1,48 @@
+package fundamentos;
+import java.util.*;
+
+//import javax.swing.JOptionPane;
+
+public class Console {
+	public static void main(String[] args) {
+//		Scanner teste  = new Scanner(System.in);
+//		 
+//		//teste.nextInt();
+//		//System.out.println(armazenado);
+//		
+//		
+//		Integer valor = Integer.parseInt(teste.nextLine());
+//		System.out.println(valor.toString());
+//		teste.close();
+//		int valor = (int) 14.5;
+//		System.out.println(valor);
+//		
+//		int valor2 = 10001;
+//		System.out.println(Integer.toString(valor2));
+//		
+//		String valor3 = JOptionPane.showInputDialog("Digite o numero");
+//		//Integer valor4 = Integer.parseInt("15");
+//		System.out.println(valor3);
+		
+		Scanner valor = new Scanner(System.in);
+		String salario1 = valor.nextLine().replace(',','.');
+		String salario2 = valor.nextLine().replace(',','.');
+		String salario3 = valor.nextLine().replace(',','.');
+		System.out.println(salario1);
+		System.out.println(salario2);
+		System.out.println(salario3);
+		int valor4 = 4;
+		double media = (Double.parseDouble(salario1)+Double.parseDouble(salario2)+Double.
+				parseDouble(salario3))/3;
+		
+		System.out.print("o salário é:"+media);
+		
+		
+		valor4+=1;
+		System.out.println(valor4);
+		valor.close();
+
+		
+	}
+
+}

@@ -1,0 +1,16 @@
+package fundamento;
+
+public class Wrapper {
+	public static void main(String[] args) {
+		//byte
+		Byte b = 100;
+		Short s = 1000;
+		
+		//Integer.parseInt(entrada.next());
+		Integer i = 10000; //int
+		Long l = 100000L;
+		
+		System.out.println(b.byteValue());
+	}
+
+}

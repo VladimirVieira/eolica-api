@@ -1,0 +1,5 @@
+package br.com.seuprojeto.weatherapi.model;
+
+public class WeatherResponde {
+
+}

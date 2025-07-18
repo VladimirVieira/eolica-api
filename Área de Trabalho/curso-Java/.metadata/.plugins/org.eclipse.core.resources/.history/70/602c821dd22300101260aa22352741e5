@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão do Tempo - Clima API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #333;
+        }
+        input, select {
+            padding: 8px;
+            margin: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            width: 300px;
+            background-color: #fff;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Consulta de Clima</h1>
+
+    <!-- Inputs de latitude e longitude -->
+    <input type="number" id="latitude" placeholder="Latitude" step="any" />
+    <input type="number" id="longitude" placeholder="Longitude" step="any" />
+    
+    <!-- Botões para diferentes funcionalidades -->
+    <button onclick="getWeatherForecast()">Previsão do Tempo</button>
+    <button onclick="getWeatherAlerts()">Alertas Meteorológicos</button>
+    <button onclick="getWeatherHistory()">Histórico do Tempo</button>
+    <button onclick="compareWeather()">Comparativo Climático</button>
+    
+    <!-- Análises Setoriais -->
+    <select id="sector">
+        <option value="agriculture">Agricultura</option>
+        <option value="energy">Energia</option>
+    </select>
+    <button onclick="getSectorAnalysis()">Análise Setorial</button>
+
+    <button onclick="getRecommendations()">Recomendações Automáticas</button>
+
+    <div id="result"></div>
+
+    <script>
+    // Função para obter a previsão do tempo
+    function getWeatherForecast() {
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+        
+        if (isNaN(latitude) || isNaN(longitude)) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas de latitude e longitude.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/forecast?latitude=${latitude}&longitude=${longitude}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Previsão do Tempo</h3>
+                    <p>Temperatura: ${data.current_weather.temperature}°C</p>
+                    <p>Velocidade do vento: ${data.current_weather.windspeed} km/h</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao obter previsão do tempo: ${error.message}</span>`;
+            });
+    }
+
+    // Função para obter alertas meteorológicos
+    function getWeatherAlerts() {
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+
+        if (isNaN(latitude) || isNaN(longitude)) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas de latitude e longitude.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/alerts?latitude=${latitude}&longitude=${longitude}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Alertas Meteorológicos</h3>
+                    <p>${data}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao obter alertas meteorológicos: ${error.message}</span>`;
+            });
+    }
+
+    // Função para obter o histórico do tempo
+    function getWeatherHistory() {
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+        const date = prompt("Digite a data (formato: YYYY-MM-DD):");
+
+        if (isNaN(latitude) || isNaN(longitude) || !date) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas de latitude e longitude e uma data válida.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/history?latitude=${latitude}&longitude=${longitude}&date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Histórico do Tempo</h3>
+                    <p>Temperatura em ${date}: ${data.current_weather.temperature}°C</p>
+                    <p>Velocidade do vento em ${date}: ${data.current_weather.windspeed} km/h</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao obter histórico do tempo: ${error.message}</span>`;
+            });
+    }
+
+    // Função para comparar o clima entre duas localidades
+    function compareWeather() {
+        const lat1 = parseFloat(prompt("Digite a latitude do primeiro local:"));
+        const lon1 = parseFloat(prompt("Digite a longitude do primeiro local:"));
+        const lat2 = parseFloat(prompt("Digite a latitude do segundo local:"));
+        const lon2 = parseFloat(prompt("Digite a longitude do segundo local:"));
+
+        if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas para ambas as localidades.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/compare?lat1=${lat1}&lon1=${lon1}&lat2=${lat2}&lon2=${lon2}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Comparativo Climático</h3>
+                    <p>${data}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao comparar clima: ${error.message}</span>`;
+            });
+    }
+
+    // Função para obter a análise setorial (Agricultura ou Energia)
+    function getSectorAnalysis() {
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+        const sector = document.getElementById("sector").value;
+
+        if (isNaN(latitude) || isNaN(longitude)) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas de latitude e longitude.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/sector-analysis?latitude=${latitude}&longitude=${longitude}&sector=${sector}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Análise Setorial (${sector})</h3>
+                    <p>${data}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao obter análise setorial: ${error.message}</span>`;
+            });
+    }
+
+    // Função para obter as recomendações automáticas
+    function getRecommendations() {
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+
+        if (isNaN(latitude) || isNaN(longitude)) {
+            document.getElementById("result").innerHTML = "<span class='error'>Por favor, insira coordenadas válidas de latitude e longitude.</span>";
+            return;
+        }
+
+        fetch(`/api/weather/recommendations?latitude=${latitude}&longitude=${longitude}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <h3>Recomendações Automáticas</h3>
+                    <p>${data}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = `<span class='error'>Erro ao obter recomendações automáticas: ${error.message}</span>`;
+            });
+    }
+</script>
+
+</body>
+</html>

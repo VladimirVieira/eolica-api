@@ -1,0 +1,15 @@
+package fundamentos;
+
+public class DesafioTemperatura {
+	public static void main(String[] args) {
+		final int ajuste = 32;
+		final double fator = 5.0/9.0;
+		double temperaturaF = 45;
+		double temperaturaC = (temperaturaF - ajuste) * fator;
+		
+		System.out.println("A conversão resultou em:" + temperaturaC + "°C");
+		
+		System.out.println("teste", 2);
+	}
+
+}

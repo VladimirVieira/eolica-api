@@ -1,0 +1,54 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempo;
+
+public class PrevisaoTempoEolicaService {
+	//*********************************************************************************************************************
+		//Definindo o intervalo de datas 
+		protected  ArrayList<String> obterData() {
+			
+					LocalDate dataHoje = LocalDate.now();
+					LocalDate data15AnosAtras = dataHoje.minusYears(15);
+					String dataAtual = dataHoje.toString();
+					String dataNormalizada = data15AnosAtras.toString();
+					ArrayList<String> data = new ArrayList<String>();
+					data.add(dataAtual);
+					data.add(dataNormalizada);
+					
+			return data; 
+			//continua
+		}
+		
+	//**********************************************************************************************************************
+		//Constroi a URL
+		protected abstract String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual);
+		
+	//***********************************************************************************************************************
+	//Extraindo dados da open-meteo
+		public Map<String, Object>obterDadosApi(String url){
+			
+			try {
+				return apiExterna.extrairDadosApi(url);
+			}catch (Exception e) {
+				throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+			}
+				
+			//continua
+		}
+	
+	//************************************************************************************************************************
+		protected abstract PrevisaoTempo instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao);
+		
+	//************************************************************************************************************************
+	//Previsão de vento para 7 dias 
+		protected abstract  Map<String, List<Double>> processarDados(PrevisaoTempo armazemDadosPrevisao, Map<String, Object> dailyPrevisao);
+		
+	//***************************************************************************************************************************
+		protected abstract PrevisaoTempo armazenarDadosPrevisao(double latitude, double longitude);
+}

@@ -1,0 +1,973 @@
+package ecommerce.service;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Collections;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import ecommerce.dto.CompraDTO;
+import ecommerce.dto.DisponibilidadeDTO;
+import ecommerce.dto.EstoqueBaixaDTO;
+import ecommerce.dto.PagamentoDTO;
+import ecommerce.entity.CarrinhoDeCompras;
+import ecommerce.entity.Cliente;
+import ecommerce.entity.ItemCompra;
+import ecommerce.entity.Produto;
+import ecommerce.entity.TipoCliente;
+import ecommerce.external.IEstoqueExternal;
+import ecommerce.external.IPagamentoExternal;
+
+public class CompraServiceTest {
+
+  // private CompraService compraService;
+
+  // @BeforeEach
+  // void setUp() {
+  //     compraService = new CompraService(null, null, null, null); // Dependências são irrelevantes para este teste.
+  // }
+//gustavo
+   @Mock
+    private CarrinhoDeComprasService carrinhoService;
+
+    @Mock
+    private ClienteService clienteService;
+
+    @Mock
+    private IEstoqueExternal estoqueExternal;
+
+    @Mock
+    private IPagamentoExternal pagamentoExternal;
+
+    @InjectMocks
+    private CompraService compraService;
+
+    @BeforeEach
+    void setUp() {
+        // Inicializa os mocks do Mockito
+        MockitoAnnotations.openMocks(this);
+    }
+
+     
+  
+__________________________________________________________________________________________________________________________________
+
+   
+   @Test
+   void calcularFrete_clientePesoMaiorQue50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(51); // Peso unitário do produto (acima de 50kg)
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 51kg (1 produto de 51kg)
+       // Cálculo do frete para peso acima de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 51kg: 51kg * 7 = 357,00
+       BigDecimal frete = BigDecimal.valueOf(51 * 7);
+
+       // Frete com desconto de 50% (cliente PRATA): 357,00 * 0.5 = 178,50
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 178,50 = 278,50
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   @Test
+   void calcularFrete_clientePesoJustoSuperiorA50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(51); // Peso unitário do produto ligeiramente acima de 50kg
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 51kg (1 produto de 51kg)
+       // Cálculo do frete para peso acima de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 51kg: 51kg * 7 = 357
+       BigDecimal pesoProduto = BigDecimal.valueOf(51); // Peso em BigDecimal
+       BigDecimal valorFretePorKg = BigDecimal.valueOf(7); // Preço por kg
+
+       BigDecimal frete = pesoProduto.multiply(valorFretePorKg); // Cálculo do frete
+
+       // Frete com desconto de 50% (cliente PRATA): 350.7 * 0.5 = 175.35
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 175.35 = 275.35
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   
+   @Test
+   void calcularFrete_clientePesoSuperiorA50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso((int) 51.0); // Peso unitário do produto ligeiramente superior a 50kg
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 51kg (1 produto de 51kg)
+       // Cálculo do frete para peso acima de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 51kg: 51kg * 7 = 357,00
+       BigDecimal frete = BigDecimal.valueOf(51 * 7);
+
+       // Frete com desconto de 50% (cliente PRATA): 357,00 * 0.5 = 178,50
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 178,50 = 278,50
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   
+   @Test
+   void calcularFrete_clientePesoMuitoSuperiorA50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(100); // Peso unitário do produto, muito acima de 50kg
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 100kg (1 produto de 100kg)
+       // Cálculo do frete para peso acima de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 100kg: 100kg * 7 = 700,00
+       BigDecimal frete = BigDecimal.valueOf(100 * 7);
+
+       // Frete com desconto de 50% (cliente PRATA): 700,00 * 0.5 = 350,00
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 350,00 = 450,00
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   
+//   @Test                                                                          
+//   void calcularCustoTotal_clientePrata_comDescontoFrete_semDescontoItens_pesoEntre1e50kg() {
+//       Cliente cliente = new Cliente();
+//       cliente.setTipo(TipoCliente.PRATA);
+//
+//       Produto produto = new Produto();
+//       produto.setPeso(1); // Peso unitário do produto
+//       produto.setPreco(BigDecimal.valueOf(50));
+//
+//       ItemCompra item = new ItemCompra();
+//       item.setProduto(produto);
+//       item.setQuantidade(11L); // Quantidade de itens
+//
+//       List<ItemCompra> itens = Arrays.asList(item);
+//
+//       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+//         1L, 
+//         cliente, 
+//         itens, 
+//         LocalDate.now()
+//       );
+//
+//       // Cálculo do custo total com desconto de 50% no frete (cliente Prata)
+//       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+//
+//       // Cálculo esperado: 50 * 11 = 550,00 (sem desconto nos itens)
+//       // Peso total: 1 * 11 = 11kg
+//       // Frete: 11kg * 4,00 (R$ 44,00) com desconto de 50%, ou seja, R$ 22,00
+//       BigDecimal esperado = BigDecimal.valueOf(50 * 11).add(BigDecimal.valueOf(11)).setScale(1, RoundingMode.HALF_UP);
+//
+//       assertEquals(esperado, custoTotal);
+//   }
+   
+   @Test
+   void calcularFrete_clientePesoLimite50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(50); // Peso unitário do produto
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 50,00kg (1 produto de 50kg)
+       // Cálculo do frete para peso entre 10 e 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 50kg: 50kg * 4 = 200,00
+       BigDecimal frete = BigDecimal.valueOf(50 * 4); 
+
+       // Frete com desconto de 50% (cliente PRATA): 200,00 * 0,5 = 100,00
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 100 = 200,00
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   @Test
+   void calcularFrete_clientePesoAcima50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(51); // Peso unitário do produto, acima de 50kg
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 51kg (1 produto de 51kg)
+       // Cálculo do frete para peso acima de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 51kg: 51kg * 7 = 357,00
+       BigDecimal frete = BigDecimal.valueOf(51 * 7);
+
+       // Frete com desconto de 50% (cliente PRATA): 357,00 * 0.5 = 178,50
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 178,50 = 278,50
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+   @Test
+   void calcularFrete_clientePesoAbaixo50kg() {
+       // Criando o cliente
+       Cliente cliente = new Cliente();
+       cliente.setTipo(TipoCliente.PRATA);
+
+       // Criando o produto
+       Produto produto = new Produto();
+       produto.setPeso(49); // Peso unitário do produto, abaixo de 50kg
+       produto.setPreco(BigDecimal.valueOf(100));
+
+       // Criando o item de compra
+       ItemCompra item = new ItemCompra();
+       item.setProduto(produto);
+       item.setQuantidade(1L); // Quantidade de itens
+
+       // Criando a lista de itens no carrinho
+       List<ItemCompra> itens = Arrays.asList(item);
+
+       // Criando o carrinho de compras
+       CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+         1L, 
+         cliente, 
+         itens, 
+         LocalDate.now()
+       );
+
+       // Peso total é 49kg (1 produto de 49kg)
+       // Cálculo do frete para peso abaixo de 50kg
+       BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+       // Preço dos itens: 100,00 (sem desconto nos itens)
+       BigDecimal custoItens = BigDecimal.valueOf(100);
+
+       // Frete para 49kg: 49kg * 4 = 196,00
+       BigDecimal frete = BigDecimal.valueOf(49 * 4);
+
+       // Frete com desconto de 50% (cliente PRATA): 196,00 * 0.5 = 98,00
+       BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5));
+
+       // Cálculo total esperado: 100 + 98 = 198,00
+       BigDecimal esperado = custoItens.add(freteComDesconto).setScale(1, RoundingMode.HALF_UP);
+
+       // Verificando se o custo total calculado é igual ao esperado
+       assertEquals(esperado, custoTotal);
+   }
+
+  
+  
+
+  
+  
+  @Test
+  void calcularCustoTotal_clienteBronze_comFreteintegral_semDescontoItens_pesoAcimaDe10kg() {
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.BRONZE); // Cliente tipo Bronze, sem desconto no frete
+
+      Produto produto = new Produto();
+      produto.setPeso(15); // Peso unitário do produto
+      produto.setPreco(BigDecimal.valueOf(50)); // Preço do produto
+
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(3L); // Quantidade de itens
+
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com frete integral
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+      // Peso total: 15 * 3 = 45kg
+      // Frete: 45kg * 4,00 = 180,00 (frete sem desconto)
+      BigDecimal esperado = BigDecimal.valueOf(50 * 3).add(BigDecimal.valueOf(180)).setScale(1, RoundingMode.HALF_UP);
+
+      assertEquals(esperado, custoTotal);
+  }
+
+  
+  
+
+  
+ 
+  
+  @Test
+  void calcularCustoTotal_clienteBronze_comDesconto10EmItens_pesoAcima50kg() {
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.BRONZE); // Cliente tipo Bronze, com frete integral
+
+      Produto produto = new Produto();
+      produto.setPeso(10); // Peso unitário do produto
+      produto.setPreco(BigDecimal.valueOf(250)); // Preço do produto
+
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(3L); // Quantidade de itens
+
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 10% nos itens
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+      // Preço dos itens: 250 * 3 = 750,00
+      // Desconto de 10%: 750,00 * 0.9 = 675,00
+      // Peso total: 10 * 3 = 30kg
+      // Frete: 30kg * 4,00 = 120,00
+      BigDecimal esperado = BigDecimal.valueOf(675).add(BigDecimal.valueOf(120)).setScale(1, RoundingMode.HALF_UP);
+
+      assertEquals(esperado, custoTotal);
+  }
+  
+  
+  
+  @Test
+  void calcularCustoTotal_clientePrata_comDesconto20EmItens_pesoAcima50kg() {
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA); // Cliente tipo Prata, com 50% de desconto no frete
+
+      Produto produto = new Produto();
+      produto.setPeso(30); // Peso unitário do produto
+      produto.setPreco(BigDecimal.valueOf(500)); // Preço unitário do produto
+
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(3L); // Quantidade de itens
+
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 20% nos itens
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+      // Preço dos itens: 500 * 3 = 1500,00
+      // Desconto de 20%: 1500,00 * 0.8 = 1200,00
+      // Peso total: 30 * 3 = 90kg
+      // Frete: 90kg * 7,00 = 630,00
+      // Desconto de 50% no frete para cliente PRATA: 630,00 * 0.5 = 315,00
+      BigDecimal esperado = BigDecimal.valueOf(1200).add(BigDecimal.valueOf(315)).setScale(1, RoundingMode.HALF_UP);
+
+      assertEquals(esperado, custoTotal);
+  }
+
+________________________________________________________________________________________________________________________
+  
+  @Test
+  void calcularCustoTotal_valorAcimaDe1000_comDesconto20() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(300)); // Preço do produto
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (300 * 4 = 1200)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 20% (custoItens = 1200)
+      BigDecimal custoItens = BigDecimal.valueOf(300 * 4); // 4 produtos de 300
+      BigDecimal desconto = custoItens.multiply(BigDecimal.valueOf(0.2)); // 20% de desconto
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 1200 - 240 = 960
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 960 (itens com desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 960 + 40 = 1000
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+
+  @Test
+  void calcularCustoTotal_valorExatoDe1000_comDesconto10() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(250)); // Preço do produto
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (250 * 4 = 1000)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 10% (custoItens = 1000)
+      BigDecimal custoItens = BigDecimal.valueOf(250 * 4); // 4 produtos de 250 = 1000
+      BigDecimal desconto = custoItens.multiply(BigDecimal.valueOf(0.1)); // 10% de desconto
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 1000 - 100 = 900
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 900 (itens com desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 900 + 40 = 940
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+
+
+  @Test
+  void calcularCustoTotal_valorExatoDe999_comDesconto10() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(249.75)); // Preço do produto (249.75 * 4 = 999)
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (249.75 * 4 = 999)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 10% (custoItens = 999)
+      BigDecimal custoItens = BigDecimal.valueOf(249.75 * 4); // 4 produtos de 249.75 = 999
+      BigDecimal desconto = custoItens.multiply(BigDecimal.valueOf(0.1)); // 10% de desconto
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 999 - 99.9 = 899.1
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 899.1 (itens com desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 899.1 + 40 = 939.1
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+  
+  @Test
+  void calcularCustoTotal_valorAcimaDe1001_comDesconto20() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(250.25)); // Preço do produto (250.25 * 4 = 1001)
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (250.25 * 4 = 1001)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 20% (custoItens = 1001)
+      BigDecimal custoItens = BigDecimal.valueOf(250.25 * 4); // 4 produtos de 250.25 = 1001
+      BigDecimal desconto = custoItens.multiply(BigDecimal.valueOf(0.2)); // 20% de desconto
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 1001 - 200.2 = 800.8
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 800.8 (itens com desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 800.8 + 40 = 840.8
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+  
+  @Test
+  void calcularCustoTotal_valorAcimaDe500_comDesconto10() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(125.25)); // Preço do produto (125.25 * 4 = 501)
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (125.25 * 4 = 501)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total com desconto de 10% (custoItens = 501)
+      BigDecimal custoItens = BigDecimal.valueOf(125.25 * 4); // 4 produtos de 125.25 = 501
+      BigDecimal desconto = custoItens.multiply(BigDecimal.valueOf(0.1)); // 10% de desconto
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 501 - 50.1 = 450.90
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 450.90 (itens com desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 450.90 + 40 = 490.90
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+  
+  
+  @Test
+  void calcularCustoTotal_valorExato500_semDesconto10() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(5); // Peso do produto
+      produto.setPreco(BigDecimal.valueOf(125)); // Preço do produto (125 * 4 = 500)
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (125 * 4 = 500)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total sem desconto (custoItens = 500)
+      BigDecimal custoItens = BigDecimal.valueOf(125 * 4); // 4 produtos de 125 = 500
+      BigDecimal desconto = BigDecimal.ZERO; // Nenhum desconto aplicado
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 500 - 0 = 500
+
+      // Peso total = 4 produtos de 5kg = 20kg
+      BigDecimal frete = BigDecimal.valueOf(20 * 4); // 20kg * R$ 4,00 = R$ 80,00
+      // Frete com desconto de 50% (cliente PRATA): 80 * 0.5 = 40,00
+      BigDecimal freteComDesconto = frete.multiply(BigDecimal.valueOf(0.5)); // R$ 40,00
+
+      // Cálculo total esperado: 500 (itens sem desconto) + 40 (frete com desconto)
+      BigDecimal esperado = custoItensComDesconto.add(freteComDesconto); // Total = 500 + 40 = 540
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+  }
+  
+  
+  ______________________________________________________________________________________________________________
+  @Test
+  void calcularFrete_peso1kg_freteZero() {
+      // Criando o cliente
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto
+      Produto produto = new Produto();
+      produto.setPeso(1); // Peso unitário do produto (1.0kg)
+      produto.setPreco(BigDecimal.valueOf(100)); // Preço do produto
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(1L); // Quantidade de itens (1 produto de 1kg)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total
+      BigDecimal custoItens = BigDecimal.valueOf(100); // 1 produto de 100
+      BigDecimal desconto = BigDecimal.ZERO; // Nenhum desconto aplicado
+      BigDecimal custoItensComDesconto = custoItens.subtract(desconto); // 100 - 0 = 100
+
+      // Peso total = 1 produto de 1kg = 1kg
+      BigDecimal frete = BigDecimal.ZERO; // Frete para 1kg deve ser zero
+
+      // Cálculo total esperado: 100 (itens) + 0 (frete)
+      BigDecimal esperado = custoItensComDesconto.add(frete); // Total = 100 + 0 = 100
+
+      // Verificando se o custo total calculado é igual ao esperado
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+      assertEquals(esperado.setScale(1, RoundingMode.HALF_UP), custoTotal);
+
+      // Adicionando logs para depuração
+      System.out.println("Peso Total: " + carrinho.getItens().stream()
+          .mapToDouble(itemCompra -> itemCompra.getProduto().getPeso() * itemCompra.getQuantidade())
+          .sum());
+      System.out.println("Custo Itens: " + custoItens);
+      System.out.println("Frete Calculado: " + frete);
+  }
+  
+  
+  
+  @Test
+  void calcularCustoTotal_clientePrata_comFreteZero_pesoMenorQue5kg() {
+      // Criando o cliente do tipo PRATA
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto com peso de 1kg (menor que 5kg)
+      Produto produto = new Produto();
+      produto.setPeso(1); // Peso unitário do produto (1kg)
+      produto.setPreco(BigDecimal.valueOf(100)); // Preço unitário do produto
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(4L); // Quantidade de itens (4 produtos de 100, total de R$ 400)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+      // Cálculo esperado:
+      // Preço dos itens: 100 * 4 = 400,00
+      BigDecimal custoItens = BigDecimal.valueOf(100 * 4); // 4 produtos de 100
+      // Peso total: 1kg * 4 = 4kg
+      // Como o peso é menor que 5kg, o frete será 0,00
+      BigDecimal frete = BigDecimal.ZERO;
+
+      // Cálculo total esperado: 400 (itens) + 0 (frete)
+      BigDecimal esperado = custoItens.add(frete).setScale(1, RoundingMode.HALF_UP);
+
+      // Verificando se o custo total calculado é igual ao esperado
+      assertEquals(esperado, custoTotal);
+  }
+  
+  @Test
+  void calcularCustoTotal_clientePrata_comFreteZero_pesoExatoAbaixo5kg() {
+      // Criando o cliente do tipo PRATA
+      Cliente cliente = new Cliente();
+      cliente.setTipo(TipoCliente.PRATA);
+
+      // Criando o produto com peso exato de 1kg (menor que 5kg)
+      Produto produto = new Produto();
+      produto.setPeso(1); // Peso unitário do produto (1kg)
+      produto.setPreco(BigDecimal.valueOf(100)); // Preço unitário do produto
+
+      // Criando o item de compra
+      ItemCompra item = new ItemCompra();
+      item.setProduto(produto);
+      item.setQuantidade(3L); // Quantidade de itens (3 produtos de 100, total de R$ 300)
+
+      // Criando a lista de itens no carrinho
+      List<ItemCompra> itens = Arrays.asList(item);
+
+      // Criando o carrinho de compras
+      CarrinhoDeCompras carrinho = new CarrinhoDeCompras(
+          1L, 
+          cliente, 
+          itens, 
+          LocalDate.now()
+      );
+
+      // Cálculo do custo total
+      BigDecimal custoTotal = compraService.calcularCustoTotal(carrinho).setScale(1, RoundingMode.HALF_UP);
+
+      // Cálculo esperado:
+      // Preço dos itens: 100 * 3 = 300,00
+      BigDecimal custoItens = BigDecimal.valueOf(100 * 3); // 3 produtos de 100
+      // Peso total: 1kg * 3 = 3kg (menor que 5kg, então o frete será 0)
+      BigDecimal frete = BigDecimal.ZERO;
+
+      // Cálculo total esperado: 300 (itens) + 0 (frete)
+      BigDecimal esperado = custoItens.add(frete).setScale(1, RoundingMode.HALF_UP);
+
+      // Verificando se o custo total calculado é igual ao esperado
+      assertEquals(esperado, custoTotal);
+  }
+  
+  
+ 
+  
+}

@@ -1,0 +1,34 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+
+public abstract class DadosLocalServiceTemplate {
+
+//************************************************************************************************************************************	
+	//Constroi a URL
+	protected abstract String construirUrl(String latitude, String longitude, String data);
+	 
+//**********************************************************************************************************************	
+	 //Extraindo dados da open-meteo
+	public Map<String, Object>obterDadosDaApi(String url){
+			
+		try {
+			return comunicaoApi.obterDadosDaApi(url);
+		}catch (Exception e) {
+			throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+		}
+				
+	}
+	
+//**********************************************************************************************************************
+	//Método para obter dados de temperatura do dia
+	protected abstract Double obterDadosTemperatura(Map<String, Object> hourly);
+	
+
+	
+//**********************************************************************************************************************
+	//Método para obter dados de ventos do dia
+	protected abstract Double obterDadosVentos(Map<String, Object> hourly);
+}

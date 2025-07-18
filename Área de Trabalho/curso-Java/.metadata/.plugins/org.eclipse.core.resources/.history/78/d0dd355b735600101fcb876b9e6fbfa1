@@ -1,0 +1,30 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
+
+@Service
+public abstract class DadosDiarioEolicoService extends DadosDiarioServiceTemplate{
+	 @Override
+	    protected DadosDiariosHistorico processarDados(Map<String, Object> daily, DadosDiariosHistorico historico) {
+	        List<Double> tempMax = (List<Double>) daily.get("temperature_2m_max");
+	        List<Double> tempMin = (List<Double>) daily.get("temperature_2m_min");
+	        List<Double> medias = calcularTemperaturaMedia(tempMax, tempMin);
+	        historico.setTempMedia(medias);
+	        return historico;
+	    }
+
+	    private List<Double> calcularTemperaturaMedia(List<Double> max, List<Double> min) {
+			return min;
+	        // implementação específica
+	    }
+
+}
+
+
+
+  

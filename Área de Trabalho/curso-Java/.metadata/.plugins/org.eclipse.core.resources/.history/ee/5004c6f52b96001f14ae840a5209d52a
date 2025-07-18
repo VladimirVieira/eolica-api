@@ -1,0 +1,23 @@
+package colecoes;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.SortedSet;
+
+public class ConjuntoComportado {
+	public static void main(String[] args) {
+		//Set<String> listaAprovados = new HashSet<String>(); sem ordenação
+		//Set<String> lista = new HashSet<>(); pode ficar dessa forma
+		
+		TreeSet<String> listaAprovados = new TreeSet<>();//aceita algum critério de ordenação
+		listaAprovados.add("Ana");
+		listaAprovados.add("Carlos");
+		listaAprovados.add("Luca");
+		listaAprovados.add("Pedro");
+		
+		for(String alunos: listaAprovados) {
+			System.out.println(alunos);
+		}
+	}
+
+}

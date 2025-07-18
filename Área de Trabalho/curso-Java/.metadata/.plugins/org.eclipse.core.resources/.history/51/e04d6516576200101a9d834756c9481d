@@ -1,0 +1,148 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+import br.com.ufrn.pds1.projetopds1.model.DadosDiarioHistoricoModel;
+
+public class DadosDiarioAgriculturaService extends DadosDiarioServiceTemplate{
+	@Autowired
+    private ComunicacaoComApiExternacao apiExterna;
+//****************************************************************************************************************************************************************
+	@Override
+	//Constroi a URL
+	public String montarUrl(double latitude, double longitude, String dataInicio, String dataFim) {
+				
+		return  String.format("https://archive-api.open-meteo.com/v1/archive"
+				+ "?latitude=%s"
+				+ "&longitude=%s"
+				+ "&start_date=%s"
+				+ "&end_date=%s"
+				+ "&hourly=precipitation,radiation"
+				+ "&timezone=America/Fortaleza",latitude, longitude, dataInicio, dataFim);
+	}
+	
+//*********************************************************************************************************************************************************************
+	
+	//Extraindo dados da open-meteo
+	@Override
+	protected Map<String, Object>extrairDadosApi(String url){
+		
+		try {
+			return apiExterna.obterDadosDaApi(url);
+		}catch (Exception e) {
+			throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+		}
+	}
+	
+	
+//****************************************************************************************************************************************************************
+	
+
+	@Override
+	public DadosDiarioHistoricoModel instanciarDadosDiario(Double latitude, Double longitude,Map<String, Object> daily) {
+				
+		if (daily == null) {
+				throw new DadosInvalidosException("Apresenta dados inválidos");
+		}
+				
+		//armazenando dados
+		DadosDiarioHistoricoModel armazemDados = new DadosDiarioHistoricoModel();
+				
+		armazemDados.setData((List<String>) daily.get("time"));
+		armazemDados.setLocal("Latitude:" + latitude + "Longitude:" + longitude);
+		armazemDados.setFator1((List<Double>) daily.get("precipitation_sum"));
+		armazemDados.setFator2((List<Double>) daily.get("shortwave_radiation_sum"));
+		
+				
+					
+		return armazemDados;
+	
+
+}
+
+
+//****************************************************************************************************************************************************************
+
+	@Override
+public List<Double> calcularFatorClimatico1(List<Double> precipitacao, List<Double> fator2){
+					
+		if(precipitacao == null || precipitacao.isEmpty()) {
+				throw new DadosInvalidosException("As listas são inválidas/vazias");
+		}
+		
+					
+		List<Double> mediasPorDia = new ArrayList<>();
+					
+		for (int i = 0; i < precipitacao.size(); i++) {
+			double resultadoMedia = ((precipitacao.get(i)*4)+(precipitacao.get(i)*5)) / 9;
+				mediasPorDia.add(resultadoMedia);
+		}
+		
+		return mediasPorDia;
+	}
+
+//**************************************************************************************************************************************************************
+	//Calcular velocidade média do Vento por trimestres
+		@Override
+		public DadosDiarioHistoricoModel calcularFatorClimatico2(List<String> datasAno, List<Double> chuva, DadosDiarioHistoricoModel armazemDados){
+					
+					
+			double primeiroTri = 0, segundoTri=0, terceiroTri=0, quartoTri=0;
+			double dias = datasAno.size()/4;
+					
+			validarListas(datasAno, chuva, armazemDados);		
+			for (int i = 0; i < datasAno.size(); i++) {
+					    LocalDate data = LocalDate.parse(datasAno.get(i));
+					    int mesAtual = data.getMonthValue();
+					    
+					    
+					    if (mesAtual >= 4 && mesAtual <= 6) {
+					        primeiroTri += (chuva.get(i)*1.1);
+					    } else if (mesAtual >= 7 && mesAtual <= 9) {
+					        segundoTri += (chuva.get(i)*1.2);
+					    } else if (mesAtual >= 10 && mesAtual <= 12) {
+					        terceiroTri += (chuva.get(i)*1);
+					    } else {
+					    	quartoTri += (chuva.get(i)*0.9);
+					    }
+					}
+					
+				
+					armazemDados.setPrimeiroTrimestre(primeiroTri/dias);
+					armazemDados.setSegundoTrimestre(segundoTri/dias);
+					armazemDados.setTerceiroTrimestre(terceiroTri/dias);
+					armazemDados.setQuartoSemestre(quartoTri/dias);
+					return armazemDados;
+					
+		}
+		
+		
+		//**********************************************************************************************************************************************************
+		@Override	
+		public DadosDiarioHistoricoModel armazenarDados(double latitude, double longitude) {						
+				validarLatitudeLongitude(latitude, longitude);	
+				List<String> dataIntervalo = obterIntervaloDeData();
+				String dataInicio = dataIntervalo.get(0);
+				String dataFim = dataIntervalo.get(1);
+				String url = montarUrl(latitude, longitude, dataInicio, dataFim);
+				Map<String, Object> daily = extrairDadosApi(url);
+				DadosDiarioHistoricoModel armazemDados = instanciarDadosDiario(latitude, longitude, daily);
+					
+				//obtem dados de temperatura e velocidade do vento
+				List<Double> precipitacao = (List<Double>) daily.get("precipitation_sum");
+				List<Double> radiacao = (List<Double>) daily.get("shortwave_radiation_sum");
+				List<String> datasAno = (List<String>) daily.get("time");
+				List<Double> mediasPorDia = calcularFatorClimatico1(precipitacao, null);
+							
+				return calcularFatorClimatico2( datasAno, radiacao, armazemDados);
+
+		}
+
+}

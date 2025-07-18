@@ -1,0 +1,14 @@
+package fundamento;
+
+public class ExercicioTemperatura {
+	public static void main(String[] args) {
+		double celsius = 33;
+		double fahrenheit;
+		
+		fahrenheit = (celsius * 9)+ 160))/5;
+		
+		
+		System.out.println(fahrenheit);
+	}
+
+}

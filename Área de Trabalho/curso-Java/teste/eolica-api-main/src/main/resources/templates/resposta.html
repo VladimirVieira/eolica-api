@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultado da obtenção de dados</title>
+</head>
+<body>
+    <h1>Resultado da obtenção de dados metereológicos</h1>
+
+    <div th:if="${clima != null}">
+        <p><strong>Data:</strong> <span th:text="${clima.data}"></span></p>
+        <p><strong>Temperatura:</strong> <span th:text="${clima.temperatura}"></span> °C</p>
+        <p><strong>Velocidade do vento:</strong> <span th:text="${clima.velVento}"></span> km/h</p>
+        <p><strong>Coordenadas:</strong> 
+            <span th:text="${clima.latitude}"></span>, 
+            <span th:text="${clima.longitude}"></span>
+        </p>
+    </div>
+
+    <div th:if="${erro != null}">
+        <p th:text="${erro}"></p>
+    </div>
+
+    <br>
+    <a href="/">🔙 Voltar</a>
+</body>
+</html>
+

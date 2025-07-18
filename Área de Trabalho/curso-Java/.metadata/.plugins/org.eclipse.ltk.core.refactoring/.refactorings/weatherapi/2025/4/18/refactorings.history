@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;br.com.seuprojeto.weatherapi.model.WeatherResponde.java&apos; to &apos;WeatherResponse.java&apos;&#x0A;- Original project: &apos;weatherapi&apos;&#x0A;- Original element: &apos;br.com.seuprojeto.weatherapi.model.WeatherResponde.java&apos;&#x0A;- Renamed element: &apos;br.com.seuprojeto.weatherapi.model.WeatherResponse.java&apos;" description="Rename compilation unit &apos;WeatherResponde.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;br.com.seuprojeto.weatherapi.model{WeatherResponde.java" name="WeatherResponse.java" references="false" stamp="1745794025793" version="1.0"/>
+</session>

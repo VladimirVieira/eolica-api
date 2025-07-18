@@ -1,0 +1,25 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
+
+
+public abstract class DadosDiarioEolicoService extends DadosDiarioServiceTemplate{
+		@Override
+		//Constroi a URL
+		public String montarUrl() {
+					
+			return  String.format("https://archive-api.open-meteo.com/v1/archive"
+					+ "?latitude=%s"
+					+ "&longitude=%s"
+					+ "&start_date=%s"
+					+ "&end_date=%s"
+					+ "&daily=temperature_2m_max,temperature_2m_min,windspeed_10m_max"
+					+ "&timezone=America/Fortaleza",latitude, longitude, dataInicio, dataFim);
+			//AQUI muda
+		}
+
+}
+
+
+
+  

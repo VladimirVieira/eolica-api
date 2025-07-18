@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resultado INMET</title>
+</head>
+<body>
+    <h1>Dados Meteorológicos</h1>
+    <p><strong>Local:</strong> <span th:text="${dados.local}"></span></p>
+    <p><strong>Temperatura:</strong> <span th:text="${dados.temperatura}"></span></p>
+    <p><strong>Velocidade do Vento:</strong> <span th:text="${dados.velocidadeVento}"></span></p>
+    <a href="/">Nova Consulta</a>
+</body>
+</html>

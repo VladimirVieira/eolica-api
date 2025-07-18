@@ -1,0 +1,37 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
+
+
+public abstract class DadosDiarioEolicoService extends DadosDiarioServiceTemplate{
+
+	protected DadosDiariosHistorico instanciarDadosDiario(double lat, double lon, Map<String, Object> dados) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected String montarUrl(double lat, double lon, String string, String string2) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void validarLatLon(double lat, double lon) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected DadosDiariosHistorico processarDados(Map<String, Object> daily, DadosDiariosHistorico historico) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+
+
+
+  

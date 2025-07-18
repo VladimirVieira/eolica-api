@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="MavenProjectWizardLocationPage">
+		<list key="location">
+			<item value="/home/vladimirvieira/Área de Trabalho/api-eolica/eolica-api"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/batalha"/>
+			<item value="/home/vladimirvieira/meu-projeto-vlad"/>
+			<item value="/home/vladimirvieira/meu-projeto"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardArchetypePage">
+		<item key="catalog" value="All Catalogs"/>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+	<section name="Maven2ProjectWizardArchifactPage">
+		<list key="package">
+		</list>
+		<list key="groupId">
+		</list>
+		<list key="artifactId">
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+	<section name="MavenProjectWizardArtifactPage">
+		<list key="groupId">
+		</list>
+		<list key="name">
+		</list>
+		<list key="artifactId">
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+		<list key="version">
+			<item value="0.0.1-SNAPSHOT"/>
+		</list>
+	</section>
+	<section name="org.eclipse.m2e.core.pom.overview">
+	</section>
+	<section name="org.eclipse.m2e.core.pom.dependencies">
+	</section>
+	<section name="MavenProjectImportWizardPage">
+		<list key="rootDirectory">
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/eolica-api-main/src"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/api-eolica/novo-api/eolica-api"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/eolica-api-main"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/pastaparaTeste/eolica-api-main"/>
+			<item value="/home/vladimirvieira/Downloads/testando3"/>
+			<item value="/home/vladimirvieira/Downloads/testando"/>
+			<item value="/home/vladimirvieira/Downloads/demo2"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/projetoTeste"/>
+			<item value="/home/vladimirvieira/Downloads/demo1"/>
+			<item value="/home/vladimirvieira/Downloads/demo"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/exercicio-sb"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/eolico2"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/inmet-mvc-api-final(2)"/>
+			<item value="/home/vladimirvieira/Área de Trabalho/curso-Java/inmet-mvc-api-updated"/>
+		</list>
+		<list key="projectNameTemplate">
+			<item value="[artifactId]"/>
+			<item value="[artifactId]-TRUNK"/>
+			<item value="[artifactId]-[version]"/>
+			<item value="[groupId].[artifactId]"/>
+			<item value="[groupId].[artifactId]-[version]"/>
+			<item value="[name]"/>
+		</list>
+	</section>
+</section>

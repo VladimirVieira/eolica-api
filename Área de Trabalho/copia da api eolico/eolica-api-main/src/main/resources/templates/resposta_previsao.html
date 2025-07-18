@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <title>SisGPE</title>
+    <link rel="stylesheet" type="text/css" href="../estilo.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div id="area-cabecalho">
+        <div id="area-logo">
+            <h1>SisG<span class="branco">PE</span></h1>
+        </div>
+        <div id="area-menu">
+            <a href="/">Dados Local</a>
+            <a href="/historico1">Historico</a>
+            <a href="/previsaosemana">Previsão semanal</a>
+            <a href="/previsaoalerta">Alertas</a>
+        </div>
+    </div>
+
+    <div id="area-principal">
+        <div id="area-postagens">
+            <h2>Consultar Previsão (Ventos)</h2>
+            <br>
+            <div class="postagem">
+                <canvas id="graficoVentos" width="400" height="250"></canvas>
+            </div>
+
+            	<script th:inline="javascript">
+    			const datas = ["1 dia", "2 dia", "3 dia", "4 dia", "5 dia", "6 dia", "7 dia"];
+    			const ventos = [[${prev.previsaoVento}]];
+    			const ctxVento = document.getElementById('graficoVentos').getContext('2d');
+    			const chartVento = new Chart(ctxVento, {
+        								 type: 'line',
+        								 data: {
+            							 labels: datas,
+           								 datasets: [{
+               										 label: 'Velocidade do Vento (km/h)',
+                									 borderColor: 'rgba(0, 64, 0, 1)',
+                									 backgroundColor: 'rgba(0, 64, 0, 0.7)',
+                									 data: ventos,
+                									 fill: false,
+                									 tension: 0.1
+            										 }]
+        								 },
+        								 options: {
+            										responsive: true,
+            										plugins: {legend: {position: 'right'}},//posiciona a legenda ao lado direito
+            										scales: {x: {title: {display: true, text: 'Dia'}},
+                     										 y: {title: {display: true,text: 'Vento (km/h)'}}
+            											}
+        											}
+    									});
+			</script>
+            
+        </div>
+
+        <div id="rodape">
+            <strong>SisGPE</strong>
+        </div>
+    </div>
+
+</body>
+
+</html>

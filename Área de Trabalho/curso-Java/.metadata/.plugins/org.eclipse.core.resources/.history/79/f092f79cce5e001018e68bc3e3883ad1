@@ -1,0 +1,19 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class DadosLocalEolicaService extends DadosLocalServiceTemplate {
+	//**********************************************************************************************************************
+			//Constroi a URL
+			@Override
+			public String construirUrl(String latitude, String longitude, String data) {
+							
+				return  String.format(
+						"https://api.open-meteo.com/v1/forecast?"
+						+ "latitude=%s&"
+						+ "longitude=%s&"
+						+ "hourly=temperature_2m,windspeed_10m&start_date=%s&end_date=%s&timezone=America/Fortaleza"
+						,latitude, longitude, data, data);
+			}
+}

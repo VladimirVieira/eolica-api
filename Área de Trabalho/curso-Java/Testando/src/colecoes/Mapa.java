@@ -1,0 +1,29 @@
+package colecoes;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+public class Mapa {
+	public static void main(String[] args) {
+		Map<Integer, String> usuarios = new HashMap<Integer, String>();
+		
+		usuarios.put(1,  "Roberto");
+		usuarios.put(20, "Ricardo");
+		usuarios.put(3,  "Rafaela");
+		usuarios.put(4, "Rebeca");//adicionar/atualiza elemento
+		
+		System.out.println(usuarios.size());//verifica tamanho do Map
+		System.out.println(usuarios.isEmpty());//verifica se vazio
+		
+		System.out.println(usuarios.keySet()); //retorna a chave do elemento
+		System.out.println(usuarios.values());//retorna valores de cada eemento
+		System.out.println(usuarios.entrySet());//retorna chave valor
+		
+		for(Entry<Integer, String> registro : usuarios.entrySet()) {
+			System.out.println(registro.getKey());
+			System.out.println(registro.getValue());
+		}
+	}
+
+}

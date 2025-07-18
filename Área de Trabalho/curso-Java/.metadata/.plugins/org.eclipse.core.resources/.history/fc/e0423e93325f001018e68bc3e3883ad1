@@ -1,0 +1,23 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+public class PrevisaoTempoEolicaService {
+	//*********************************************************************************************************************
+		//Definindo o intervalo de datas 
+		protected  ArrayList<String> obterData() {
+			
+					LocalDate dataHoje = LocalDate.now();
+					LocalDate data15AnosAtras = dataHoje.minusYears(15);
+					String dataAtual = dataHoje.toString();
+					String dataNormalizada = data15AnosAtras.toString();
+					ArrayList<String> data = new ArrayList<String>();
+					data.add(dataAtual);
+					data.add(dataNormalizada);
+					
+			return data; 
+			//continua
+		}
+
+}

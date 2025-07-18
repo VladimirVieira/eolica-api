@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SisGPE</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="../estilo.css">
+</head>
+<body>
+
+	<div id="area-cabecalho">
+		
+		<div id="area-logo">
+			<h1>SisG<span class="branco">PE</span></h1>
+		</div>
+		<div id="area-menu">
+			<a href="/">Dados Local</a>
+			<a href="/historico1">Historico</a>
+			<a href="/previsaosemana">Previsao semanal</a>
+			<a href="/previsaoalerta">Alertas</a>
+		</div>
+
+	</div>
+
+	<div id="area-principal">
+
+		<div id="area-postagens">
+
+			<!-- postagem com formulário -->
+			<div class="postagem">
+				<h2>Emitir alertas</h2>
+				<br>
+				<form action="/alertas" method="get">
+				<label for="lat"><strong> Latitude:</strong></label>
+				<input type="text" id="lat" name="lat" required>
+				<br><br>
+
+				<label for="lon"><strong>Longitude:</strong></label>
+				<input type="text" id="lon" name="lon" required>
+				<br><br>
+
+
+				<button type="submit"><strong>Verificar</strong></button>
+				</form>
+		</div>
+			<!--// fim do formulário -->
+   
+
+		</div>
+
+		<div id="rodape">
+			<strong>SisGPE</strong>
+		</div>
+
+	</div>
+
+</body>
+</html>

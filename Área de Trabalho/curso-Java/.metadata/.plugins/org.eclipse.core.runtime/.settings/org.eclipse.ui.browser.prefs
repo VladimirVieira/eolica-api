@@ -1,0 +1,4 @@
+browser-choice=0
+browsers=<?xml version\="1.0" encoding\="UTF-8"?>\n<web-browsers current\="0">\n<system/>\n<external location\="/usr/bin/firefox" name\="Firefox"/>\n</web-browsers>
+eclipse.preferences.version=1
+internalWebBrowserHistory=https\://www.eclipse.org/sponsor/ide/?scope\=Eclipse%20IDE%20for%20Enterprise%20Java%20and%20Web%20Developers%20(includes%20Incubating%20components)&version\=4.32.0.20240606-0749&campaign\=2025-06|*|https\://archive-api.open-meteo.com/v1/archive?latitude\=-5.81&longitude\=-35.21&start_date\=2025-02-10&end_date\=2025-02-10&daily\=temperature_2m_max,temperature_2m_min&timezone\=America%2FFortaleza|*|

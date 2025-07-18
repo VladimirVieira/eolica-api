@@ -1,0 +1,18 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+public class DadosDiarioAgriculturaService extends DadosDiarioService{
+	//****************************************************************************************************************************************************************
+	@Override
+	//Constroi a URL
+	public String montarUrl(double latitude, double longitude, String dataInicio, String dataFim) {
+				
+		return  String.format("https://archive-api.open-meteo.com/v1/archive"
+				+ "?latitude=%s"
+				+ "&longitude=%s"
+				+ "&start_date=%s"
+				+ "&end_date=%s"
+				+ "&daily=precipitation_sum,shortwave_radiation_sum"
+				+ "&timezone=America/Fortaleza",latitude, longitude, dataInicio, dataFim);
+	}
+
+}

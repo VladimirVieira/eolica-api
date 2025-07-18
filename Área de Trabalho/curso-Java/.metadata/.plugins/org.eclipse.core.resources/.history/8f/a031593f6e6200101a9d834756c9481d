@@ -1,0 +1,147 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.model.Alertas;
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempoModel;
+
+public class PrevisaoTempoAgriculturaService extends PrevisaoTempoServiceTemplate{
+//************************************************************************************************************************************************************************
+	//Constroi a URL
+	@Override
+	public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
+		
+		return  String.format("https://archive-api.open-meteo.com/v1/archive"
+				+ "?latitude=%s"
+				+ "&longitude=%s"
+				+ "&start_date=%s"
+				+ "&end_date=%s"
+				+ "&daily=precipitation_sum,shortwave_radiation_sum"
+				+ "&timezone=America/Fortaleza",latitude, longitude, dataNormalizada, dataAtual);
+		
+	}
+//************************************************************************************************************************************************************************
+	@Override
+	public PrevisaoTempoModel instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao) {
+		//armazenando dados
+	
+		validarObjeto(dailyPrevisao);
+		PrevisaoTempoModel armazemDadosPrevisao = new PrevisaoTempoModel();
+				
+		armazemDadosPrevisao.setData((List<String>) dailyPrevisao.get("time"));
+		armazemDadosPrevisao.setLocal("Latitude:" + latitude + "Longitude:" + longitude);
+		armazemDadosPrevisao.setFator1((List<Double>) dailyPrevisao.get("precipitation_sum"));
+		armazemDadosPrevisao.setFator2((List<Double>) dailyPrevisao.get("shortwave_radiation_sum"));
+			
+		return armazemDadosPrevisao;
+		
+	}
+
+//************************************************************************************************************************************************************************
+	//Previsão de vento para 7 dias 
+	@Override
+	public  Map<String, List<Double>> processarDados(PrevisaoTempoModel armazemDadosPrevisao, Map<String, Object> dailyPrevisao) {
+		
+				validarObjeto(dailyPrevisao);
+		
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				LocalDate coletaData = LocalDate.now(); 
+				
+				List<String> historicoData = (List<String>) dailyPrevisao.get("time");
+				List<Double> mediasPrecipitacao = new ArrayList<>();
+				List<Double> mediasRadiac = new ArrayList<>();
+				
+				//manipulando dias
+				for(int i = 1; i<8;i++) {
+					LocalDate coletaDataCopia = coletaData.plusDays(i);
+	
+					Double somatorioPrecipitacao = 0.0;
+					Double somatorioRadiac = 0.0;
+					
+					
+					//manipulando anos
+					for(int j = 1; j<=15;j++) {
+						LocalDate datacopia = coletaDataCopia.minusYears(j);
+						String dataModificada = datacopia.format(formatter);
+						
+						int indiceData = historicoData.indexOf(dataModificada);
+				        
+			            Double precipitacao = armazemDadosPrevisao.getFator1().get(indiceData);
+						Double radiac = armazemDadosPrevisao.getFator2().get(indiceData);
+					
+			            somatorioPrecipitacao += precipitacao;
+			            somatorioRadiac += radiac;
+					}
+					mediasPrecipitacao.add((somatorioPrecipitacao/15));	
+					mediasRadiac.add(somatorioRadiac/15);
+				}
+				Map<String, List<Double>> resultado = new HashMap<>();
+			    resultado.put("precipitacao", mediasPrecipitacao);
+			    resultado.put("radiacao", mediasRadiac);
+
+			    return resultado;
+	}	
+			    
+//************************************************************************************************************************************************************************
+				@Override
+				public PrevisaoTempoModel armazenarDadosPrevisao(double latitude, double longitude) {
+					
+					validarLatitudeLongitude(latitude, longitude);
+					
+					List<String> data = obterData();
+					String dataAtual = data.get(0);
+					String dataNormalizada = data.get(1);
+					String url = obterUrl(latitude, longitude, dataNormalizada, dataAtual);
+					Map<String, Object> dailyPrevisao = obterDadosApi(url);
+					PrevisaoTempoModel armazemDadosPrevisao = instanciarPrevisaoDoTempo(latitude, longitude, dailyPrevisao);
+					Map<String, List<Double>> resultado = processarDados(armazemDadosPrevisao, dailyPrevisao); 
+					
+
+					armazemDadosPrevisao.setPrevisaoFator1(resultado.get("precipitacao"));
+					armazemDadosPrevisao.setPrevisaoFator2(resultado.get("radiacao"));
+					
+					return armazemDadosPrevisao;
+				
+				
+			    
+			
+				}
+//******************************************Previsão do tempo*****************************************************************************************************
+				@Override
+				public List<Alertas> verificarAlertas(PrevisaoTempoModel infoPrev) {
+					
+					List<Alertas> informacao = new ArrayList<>();
+			
+					List<Double> precipitacao = infoPrev.getPrevisaoFator1();
+					List<Double> radiac = infoPrev.getPrevisaoFator2();
+
+					for (int i = 0; i < precipitacao.size(); i++) {
+						
+						Double limitePrecipitacao = precipitacao.get(i);
+						Double limiteRadiac = radiac.get(i);
+					
+						
+						if(limitePrecipitacao > 30 && limiteRadiac<10) {
+							informacao.add(new Alertas((i+1)+"° dia", "Alerta de encharcamento do solo e Alerta de baixa fotossíntese"));
+						}else if(limitePrecipitacao < 10 && limiteRadiac<10) {
+							informacao.add(new Alertas((i+1)+"° dia", "Atenção: risco de doenças fúngicas e Condição ideal para muitas culturas tropicais"));
+						}else if(limitePrecipitacao < 10 && limiteRadiac>25) {
+							informacao.add(new Alertas((i+1)+"° dia", "Atenção: risco de doenças fúngicas e Alerta de risco de queimadura foliar"));
+						}else if(limitePrecipitacao < 2 && limiteRadiac>25<20) {
+							informacao.add(new Alertas((i+1)+"° dia", "Alerta combinado: estresse térmico + hídrico"));
+						}else {
+							informacao.add(new Alertas((i+1)+"° dia", "Condições ideais para realização plantação"));
+						}
+							
+					}
+
+					return informacao;
+			
+				}	
+
+}

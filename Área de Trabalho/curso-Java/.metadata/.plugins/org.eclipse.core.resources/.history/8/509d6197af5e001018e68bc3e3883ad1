@@ -1,0 +1,16 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
+
+
+public abstract class DadosDiarioEolicoService extends DadosDiarioServiceTemplate{
+
+
+
+}
+
+
+
+  

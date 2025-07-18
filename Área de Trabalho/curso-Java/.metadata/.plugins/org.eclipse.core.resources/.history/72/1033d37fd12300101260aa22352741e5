@@ -1,0 +1,25 @@
+package br.com.seuprojeto.weatherapi.client;
+
+import br.com.seuprojeto.weatherapi.model.WeatherResponse;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
+
+@Component
+public class WeatherClient {
+
+    private static final String API_URL = "https://api.open-meteo.com/v1/forecast";
+
+    public WeatherResponse fetchWeatherForecast(double latitude, double longitude) {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = String.format("%s?latitude=%.4f&longitude=%.4f&current_weather=true", API_URL, latitude, longitude);
+        return restTemplate.getForObject(url, WeatherResponse.class);
+    }
+
+    public String fetchWeatherAlerts(double latitude, double longitude) {
+        return "Alerta: Nenhum alerta para a região.";
+    }
+
+    public WeatherResponse fetchWeatherHistory(double latitude, double longitude, String date) {
+        return new WeatherResponse(); // Simulação
+    }
+}

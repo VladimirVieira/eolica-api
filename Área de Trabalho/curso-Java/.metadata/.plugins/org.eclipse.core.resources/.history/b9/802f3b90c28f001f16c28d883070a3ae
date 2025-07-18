@@ -1,0 +1,19 @@
+package fundamento;
+
+public class TiposPrimitivos {
+	public static void main(String[] args) {
+		byte valor = 1;
+		short valor2 = 10;
+		int valor3 = 25;
+		long valor4 = 300L;
+		float valor5 = 3.5F;
+		double valor6 = 4.5;
+		char valor7 ='a';
+		boolean valor8 = true;
+		
+		System.out.println(valor);
+		System.out.println(valor2);
+		System.out.println(valor3);
+	}
+
+}

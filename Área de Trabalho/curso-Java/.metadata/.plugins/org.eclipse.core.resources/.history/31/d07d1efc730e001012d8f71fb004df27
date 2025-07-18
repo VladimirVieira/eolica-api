@@ -1,0 +1,21 @@
+package fundamentos;
+import java.util.*;
+public class Console {
+	public static void main(String[] args) {
+//		Scanner teste  = new Scanner(System.in);
+//		 
+//		//teste.nextInt();
+//		//System.out.println(armazenado);
+//		
+//		
+//		Integer valor = Integer.parseInt(teste.nextLine());
+//		System.out.println(valor.toString());
+//		teste.close();
+		int valor = (int) 14.5;
+		System.out.println(valor);
+		
+		int valor2 = 10001;
+		System.out.println(Integer.toString(valor2));
+	}
+
+}

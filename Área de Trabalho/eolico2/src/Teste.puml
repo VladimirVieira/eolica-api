@@ -1,0 +1,11 @@
+@startuml
+
+class ProjetopdsApplication
+
+class DadosLocalService{
+    - String url
+    + String getName()
+}
+
+ProjetopdsApplication -- DadosLocalService
+@enduml

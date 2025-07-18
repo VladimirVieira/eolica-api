@@ -1,0 +1,62 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+import br.com.ufrn.pds1.projetopds1.model.DadosLocal;
+import br.com.ufrn.pds1.projetopds1.model.DadosLocalModel;
+
+
+public abstract class DadosLocalServiceTemplate {
+	@Autowired
+	private ComunicacaoComApi comunicaoApi;
+
+//*************************************************************************************************************************************************************************	
+	//Constroi a URL
+	protected abstract String construirUrl(String latitude, String longitude, String data);
+	 
+//*************************************************************************************************************************************************************************	
+
+	//Extraindo dados da open-meteo
+	protected Map<String, Object>obterDadosDaApi(String url){
+			
+		try {
+			return comunicaoApi.obterDadosDaApi(url);
+		}catch (Exception e) {
+			throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+		}
+				
+	}
+	
+//************************************************************************************************************************************************************************
+
+	//Método para obter dados de temperatura do dia
+	protected abstract Double obterDadosFator1(Map<String, Object> hourly);
+		
+//************************************************************************************************************************************************************************	
+
+	//Método para obter dados de ventos do dia
+	protected abstract Double obterDadosFator2(Map<String, Object> hourly);
+	
+//***********************************************************************************************************************************************************************	
+
+	protected void validarLatitudeLongitude(double latitude, double longitude) {
+	    if (Double.isNaN(latitude) || Double.isNaN(longitude)) {
+	        throw new DadosInvalidosException("Os valores de latitude ou longitude não são numéricos.");
+	    }
+	    if (latitude < -90 || latitude > 90) {
+	        throw new DadosInvalidosException("Os dados de latitude são inválidos. O intervalo válido é [-90, 90].");
+	    }
+	    if (longitude < -180 || longitude > 180) {
+	        throw new DadosInvalidosException("Os dados de longitude são inválidos. O intervalo válido é [-180, 180].");
+	    }
+	}
+	
+//************************************************************************************************************************************	
+
+	public abstract DadosLocalModel pesquisarDados(String latitude, String longitude, String data);
+}

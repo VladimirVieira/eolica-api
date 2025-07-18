@@ -1,0 +1,15 @@
+@startuml
+class ParqueEolico {
+    - String nome
+    - Double potencia
+    + gerarEnergia()
+}
+
+class Turbina {
+    - int id
+    - double capacidade
+}
+
+ParqueEolico "1" -- "N" Turbina : contém >
+@enduml
+

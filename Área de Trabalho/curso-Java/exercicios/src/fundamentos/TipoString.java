@@ -1,0 +1,51 @@
+package fundamentos;
+
+public class TipoString {
+	public static void main(String[] args) {
+		System.out.println("Olá pessoal".charAt(2));//seleciona a posição de indice 2
+													//na String
+		String s = "Boa tarde";
+		System.out.println(s.concat("!!!"));//contena com as exclamações
+		System.out.println(s+"!!!");//mesmo resultado do anterior
+		System.out.println(s.startsWith("Boa"));//a string começa com Boa
+		System.out.println(s.length());
+		System.out.println(s.endsWith("dia"));//a string termina com dia
+		System.out.println(s.equals("Boa tarde"));//a string é igual a boa tarde
+		System.out.println(s.equalsIgnoreCase("boa tarde"));//ignora se é maiuscula ou minuscula
+		
+		var nome = "Pedro";
+		var sobrenome = "Santos";
+		var idade = 33;
+		var salario = 12345.987;
+		
+		String maisUmaFrase = "Nome: " + nome + "\nSobrenome: "
+				+ sobrenome + "\nIdade: " + idade +
+				"\nSalario: " + salario + "\n\n";
+		System.out.println(maisUmaFrase);
+		
+		System.out.println("Nome: " + nome + "\nSobrenome: "
+				+ sobrenome + "\nIdade: " + idade +
+				"\nSalario: " + salario + "\n\n");
+		
+		System.out.printf("O senhor %s %s tem %d anos e ganha R$.2f",
+				nome, sobrenome, idade, salario);
+		
+		String frase = String.format("\nO senhor %s %s tem %d anos e ganha R$.2f",
+				nome, sobrenome, idade, salario);
+		System.out.println(frase);
+		
+		
+		System.out.println("Frase qualquer".contains("qual"));//na string em qualquer posição
+															  //contem qual
+		
+		System.out.println("Frase qualquer".indexOf("qual")); //posição de inicio da
+															  //palavra
+		System.out.println("Frase qualquer".substring(6)); //substring a partir de pos 6
+		System.out.println("Frase qualquer".substring(6,10));//substring a partir de pos 6
+		                                                     //até pos 10
+		
+		
+		
+	}	
+
+}

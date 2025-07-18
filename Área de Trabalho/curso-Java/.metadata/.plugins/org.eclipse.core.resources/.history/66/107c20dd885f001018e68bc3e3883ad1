@@ -1,0 +1,40 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempoModel;
+
+public class PrevisaoTempoClimaUrbanoService extends PrevisaoTempoServiceTemplate{
+//************************************************************************************************************************************************************************
+			//Constroi a URL
+			@Override
+			public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
+				
+				return  String.format("https://archive-api.open-meteo.com/v1/archive"
+						+ "?latitude=%s"
+						+ "&longitude=%s"
+						+ "&start_date=%s"
+						+ "&end_date=%s"
+						+ "&daily=hortwave_radiation_sum,rain_sum"
+						+ "&timezone=America/Fortaleza",latitude, longitude, dataNormalizada, dataAtual);
+				
+			}
+
+//************************************************************************************************************************************************************************
+			@Override
+			public PrevisaoTempoModel instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao) {
+				//armazenando dados
+			
+				validarObjeto(dailyPrevisao);
+				PrevisaoTempoModel armazemDadosPrevisao = new PrevisaoTempoModel();
+						
+				armazemDadosPrevisao.setData((List<String>) dailyPrevisao.get("time"));
+				armazemDadosPrevisao.setLocal("Latitude:" + latitude + "Longitude:" + longitude);
+				armazemDadosPrevisao.setFator1((List<Double>) dailyPrevisao.get("hortwave_radiation_sum"));
+				armazemDadosPrevisao.setFator2((List<Double>) dailyPrevisao.get("rain_sum"));
+					
+				return armazemDadosPrevisao;
+				
+			}	
+}

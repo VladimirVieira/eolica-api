@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Consulta INMET</title>
+</head>
+<body>
+    <h1>Consultar Dados Meteorológicos</h1>
+    <form action="/consultar" method="post">
+        <label for="codigo">Código do Local:</label>
+        <input type="text" id="codigo" name="codigo" required>
+        <button type="submit">Consultar</button>
+    </form>
+</body>
+</html>

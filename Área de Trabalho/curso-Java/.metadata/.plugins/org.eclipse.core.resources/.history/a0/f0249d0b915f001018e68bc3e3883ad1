@@ -1,0 +1,149 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import br.com.ufrn.pds1.projetopds1.model.Alertas;
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempoModel;
+
+@Service
+public class PrevisaoTempoClimaUrbanoService extends PrevisaoTempoServiceTemplate{
+//************************************************************************************************************************************************************************
+			//Constroi a URL
+			@Override
+			public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
+				
+				return  String.format("https://archive-api.open-meteo.com/v1/archive"
+						+ "?latitude=%s"
+						+ "&longitude=%s"
+						+ "&start_date=%s"
+						+ "&end_date=%s"
+						+ "&daily=shortwave_radiation_sum,rain_sum"
+						+ "&timezone=America/Fortaleza",latitude, longitude, dataNormalizada, dataAtual);
+				
+			}
+
+//************************************************************************************************************************************************************************
+			@Override
+			public PrevisaoTempoModel instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao) {
+				//armazenando dados
+			
+				validarObjeto(dailyPrevisao);
+				PrevisaoTempoModel armazemDadosPrevisao = new PrevisaoTempoModel();
+						
+				armazemDadosPrevisao.setData((List<String>) dailyPrevisao.get("time"));
+				armazemDadosPrevisao.setLocal("Latitude:" + latitude + "Longitude:" + longitude);
+				armazemDadosPrevisao.setFator1((List<Double>) dailyPrevisao.get("shortwave_radiation_sum"));
+				armazemDadosPrevisao.setFator2((List<Double>) dailyPrevisao.get("rain_sum"));
+					
+				return armazemDadosPrevisao;
+				
+			}
+//************************************************************************************************************************************************************************
+			//Previsão de vento para 7 dias 
+			@Override
+			public  Map<String, List<Double>> processarDados(PrevisaoTempoModel armazemDadosPrevisao, Map<String, Object> dailyPrevisao) {
+				
+						validarObjeto(dailyPrevisao);
+				
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+						LocalDate coletaData = LocalDate.now(); 
+						
+						List<String> historicoData = (List<String>) dailyPrevisao.get("time");
+						List<Double> mediasRadiacao = new ArrayList<>();
+						List<Double> mediasChuva = new ArrayList<>();
+						
+						//manipulando dias
+						for(int i = 1; i<8;i++) {
+							LocalDate coletaDataCopia = coletaData.plusDays(i);
+			
+							Double somatorioRadiacao = 0.0;
+							Double somatorioChuva = 0.0;
+							
+							
+							//manipulando anos
+							for(int j = 1; j<=15;j++) {
+								LocalDate datacopia = coletaDataCopia.minusYears(j);
+								String dataModificada = datacopia.format(formatter);
+								
+								int indiceData = historicoData.indexOf(dataModificada);
+						        
+					            Double radiacao = armazemDadosPrevisao.getFator1().get(indiceData);
+								Double chuva = armazemDadosPrevisao.getFator2().get(indiceData);
+							
+					            somatorioRadiacao += radiacao;
+					            somatorioChuva += chuva;
+							}
+							mediasRadiacao.add((somatorioRadiacao/15));	
+							mediasChuva.add(somatorioChuva/15);
+						}
+						Map<String, List<Double>> resultado = new HashMap<>();
+					    resultado.put("radiacao", mediasRadiacao);
+					    resultado.put("chuva", mediasChuva);
+
+					    return resultado;
+					    
+					
+			}
+//************************************************************************************************************************************************************************
+			@Override
+			public PrevisaoTempoModel armazenarDadosPrevisao(double latitude, double longitude) {
+				
+				validarLatitudeLongitude(latitude, longitude);
+				
+				List<String> data = obterData();
+				String dataAtual = data.get(0);
+				String dataNormalizada = data.get(1);
+				String url = obterUrl(latitude, longitude, dataNormalizada, dataAtual);
+				Map<String, Object> dailyPrevisao = obterDadosApi(url);
+				PrevisaoTempoModel armazemDadosPrevisao = instanciarPrevisaoDoTempo(latitude, longitude, dailyPrevisao);
+				Map<String, List<Double>> resultado = processarDados(armazemDadosPrevisao, dailyPrevisao); 
+				
+
+				armazemDadosPrevisao.setPrevisaoFator1(resultado.get("radiacao"));
+				armazemDadosPrevisao.setPrevisaoFator2(resultado.get("chuva"));
+				
+				return armazemDadosPrevisao;
+			
+			}
+			
+//******************************************Previsão do tempo*****************************************************************************************************
+			@Override
+			public List<Alertas> verificarAlertas(PrevisaoTempoModel infoPrev) {
+				
+				List<Alertas> informacao = new ArrayList<>();
+		
+				List<Double> radiacao = infoPrev.getPrevisaoFator1();
+				List<Double> chuva = infoPrev.getPrevisaoFator2();
+
+				for (int i = 0; i < radiacao.size(); i++) {
+					
+					Double limiteRadiacao = radiacao.get(i);
+					Double limiteChuvas = chuva.get(i);
+				
+					
+					if(limiteRadiacao < 2 && limiteChuvas<30) {
+						informacao.add(new Alertas((i+1)+"° dia", "Baixo risco de chuvas e nenhuma proteção UV necessária"));
+					}else if(limiteRadiacao < 5 && limiteChuvas<50) {
+						informacao.add(new Alertas((i+1)+"° dia", "Baixo Risco de chuvas, use protetor solar e óculos"));
+					}else if(limiteRadiacao < 10 && limiteChuvas>50) {
+						informacao.add(new Alertas((i+1)+"° dia", "Baixo risco de chuvas, mas lembre-se de evitar o sol depois das 10h"));
+					}else if(limiteRadiacao < 2 && limiteChuvas<100) {
+						informacao.add(new Alertas((i+1)+"° dia", "Risco moderado de chuvas intensas"));
+					}else {
+						informacao.add(new Alertas((i+1)+"° dia", "Alto risco!Evite exposição solar"));
+					}
+						
+				}
+
+				return informacao;
+		
+			}
+			
+}

@@ -1,0 +1,16 @@
+package fundamentos;
+
+public class PrimeiroPrograma {
+	public static void main(String[] args) {
+		//comentario simples
+		/**
+		 * docstring
+		 */
+		
+		
+		System.out.println("Primeiro Programa Parte 01");
+		System.out.println("Primeiro Programa Parte 02");
+	}
+	
+
+}

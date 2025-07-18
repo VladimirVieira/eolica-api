@@ -1,0 +1,60 @@
+package br.com.seuprojeto.weatherapi.service;
+
+import br.com.seuprojeto.weatherapi.client.WeatherClient;
+import br.com.seuprojeto.weatherapi.model.WeatherResponse;
+import org.springframework.stereotype.Service;
+
+@Service
+public class WeatherService {
+
+    private final WeatherClient weatherClient;
+
+    public WeatherService(WeatherClient weatherClient) {
+        this.weatherClient = weatherClient;
+    }
+
+    public WeatherResponse getWeatherForecast(double latitude, double longitude) {
+        return weatherClient.fetchWeatherForecast(latitude, longitude);
+    }
+
+    public String getWeatherAlerts(double latitude, double longitude) {
+        return weatherClient.fetchWeatherAlerts(latitude, longitude);
+    }
+
+    public WeatherResponse getWeatherHistory(double latitude, double longitude, String date) {
+        return weatherClient.fetchWeatherHistory(latitude, longitude, date);
+    }
+
+    public String compareWeather(double lat1, double lon1, double lat2, double lon2) {
+        WeatherResponse response1 = weatherClient.fetchWeatherForecast(lat1, lon1);
+        WeatherResponse response2 = weatherClient.fetchWeatherForecast(lat2, lon2);
+        return "Comparação entre as duas localidades: \n" +
+               "Local 1: " + response1.getCurrent_weather().getTemperature() + "°C\n" +
+               "Local 2: " + response2.getCurrent_weather().getTemperature() + "°C";
+    }
+
+    public String getSectorAnalysis(double latitude, double longitude, String sector) {
+        if ("agriculture".equalsIgnoreCase(sector)) {
+            return "Análise para Agricultura: Verifique as previsões de chuva e temperatura.";
+        } else if ("energy".equalsIgnoreCase(sector)) {
+            return "Análise para Energia: Verifique as condições para geração de energia solar ou eólica.";
+        }
+        return "Setor não reconhecido.";
+    }
+
+    public String getRecommendations(double latitude, double longitude) {
+        WeatherResponse weather = weatherClient.fetchWeatherForecast(latitude, longitude);
+        if (weather.getCurrent_weather().getTemperature() > 30) {
+            return "Recomendação: Use roupas leves e proteja-se do sol.";
+        } else if (weather.getCurrent_weather().getWindspeed() > 20) {
+            return "Recomendação: Evite atividades ao ar livre devido ao vento forte.";
+        }
+        return "Clima agradável, aproveite o dia!";
+    }
+
+    public String getWeatherDashboard(double latitude, double longitude) {
+        WeatherResponse weather = weatherClient.fetchWeatherForecast(latitude, longitude);
+        return "Dashboard Clima: Temperatura: " + weather.getCurrent_weather().getTemperature() + "°C, " +
+               "Vento: " + weather.getCurrent_weather().getWindspeed() + " km/h";
+    }
+}

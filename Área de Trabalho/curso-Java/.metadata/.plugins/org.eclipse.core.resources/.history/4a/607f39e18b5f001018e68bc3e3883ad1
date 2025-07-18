@@ -1,0 +1,91 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.model.PrevisaoTempoModel;
+
+public class PrevisaoTempoClimaUrbanoService extends PrevisaoTempoServiceTemplate{
+//************************************************************************************************************************************************************************
+			//Constroi a URL
+			@Override
+			public String obterUrl(double latitude, double longitude, String dataNormalizada, String dataAtual) {
+				
+				return  String.format("https://archive-api.open-meteo.com/v1/archive"
+						+ "?latitude=%s"
+						+ "&longitude=%s"
+						+ "&start_date=%s"
+						+ "&end_date=%s"
+						+ "&daily=hortwave_radiation_sum,rain_sum"
+						+ "&timezone=America/Fortaleza",latitude, longitude, dataNormalizada, dataAtual);
+				
+			}
+
+//************************************************************************************************************************************************************************
+			@Override
+			public PrevisaoTempoModel instanciarPrevisaoDoTempo(double latitude, double longitude, Map<String, Object> dailyPrevisao) {
+				//armazenando dados
+			
+				validarObjeto(dailyPrevisao);
+				PrevisaoTempoModel armazemDadosPrevisao = new PrevisaoTempoModel();
+						
+				armazemDadosPrevisao.setData((List<String>) dailyPrevisao.get("time"));
+				armazemDadosPrevisao.setLocal("Latitude:" + latitude + "Longitude:" + longitude);
+				armazemDadosPrevisao.setFator1((List<Double>) dailyPrevisao.get("hortwave_radiation_sum"));
+				armazemDadosPrevisao.setFator2((List<Double>) dailyPrevisao.get("rain_sum"));
+					
+				return armazemDadosPrevisao;
+				
+			}
+//************************************************************************************************************************************************************************
+			//Previsão de vento para 7 dias 
+			@Override
+			public  Map<String, List<Double>> processarDados(PrevisaoTempoModel armazemDadosPrevisao, Map<String, Object> dailyPrevisao) {
+				
+						validarObjeto(dailyPrevisao);
+				
+						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+						LocalDate coletaData = LocalDate.now(); 
+						
+						List<String> historicoData = (List<String>) dailyPrevisao.get("time");
+						List<Double> mediasRadiacao = new ArrayList<>();
+						List<Double> mediasChuva = new ArrayList<>();
+						
+						//manipulando dias
+						for(int i = 1; i<8;i++) {
+							LocalDate coletaDataCopia = coletaData.plusDays(i);
+			
+							Double somatorioRadiacao = 0.0;
+							Double somatorioChuva = 0.0;
+							
+							
+							//manipulando anos
+							for(int j = 1; j<=15;j++) {
+								LocalDate datacopia = coletaDataCopia.minusYears(j);
+								String dataModificada = datacopia.format(formatter);
+								
+								int indiceData = historicoData.indexOf(dataModificada);
+						        
+					            Double radiacao = armazemDadosPrevisao.getFator1().get(indiceData);
+								Double chuva = armazemDadosPrevisao.getFator2().get(indiceData);
+							
+					            somatorioRadiacao += radiacao;
+					            somatorioChuva += chuva;
+							}
+							mediasRadiacao.add((somatorioRadiacao/15));	
+							mediasChuva.add(somatorioChuva/15);
+						}
+						Map<String, List<Double>> resultado = new HashMap<>();
+					    resultado.put("mediasTemperatura", mediasRadiacao);
+					    resultado.put("vento", mediasChuva);
+
+					    return resultado;
+					    
+					
+			}
+			
+}

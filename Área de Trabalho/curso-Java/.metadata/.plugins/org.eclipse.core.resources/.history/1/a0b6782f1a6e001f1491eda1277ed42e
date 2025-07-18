@@ -1,0 +1,11 @@
+package fundamentos;
+
+public class ConversorTemperatura {
+	public static void main(String[] args) {
+		double f = 105;
+		final double contante = 5/9.0; //tem de colocar 9.0, pois dar um número quebrado
+		System.out.println(contante*(f-32));
+				
+	}
+
+}

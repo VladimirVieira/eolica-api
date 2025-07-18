@@ -1,0 +1,53 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+
+public class DadosLocalAgriculturaService extends DadosLocalServiceTemplate{
+//*************************************************************************************************************************************************************************
+		//Constroi a URL
+		@Override
+		public String construirUrl(String latitude, String longitude, String data) {
+		    return String.format(
+		        "https://api.open-meteo.com/v1/forecast?"
+		        + "latitude=%s&"
+		        + "longitude=%s&"
+		        + "hourly=precipitation,shortwave_radiation&"
+		        + "start_date=%s&"
+		        + "end_date=%s&"
+		        + "timezone=America/Fortaleza",
+		        latitude, longitude, data, data
+		    );
+		}
+
+//*************************************************************************************************************************************************************************
+	
+		@Override
+		public Double obterDadosFator1(Map<String, Object> hourly){
+			
+			if (hourly == null) {
+				throw new DadosInvalidosException("Apresenta dados inválidos para precipitacao");
+			}
+			
+			List<Double> precipitacao = (List<Double>) hourly.get("precipitation");
+			return precipitacao.get(15);
+			//Aqui muda
+		}
+
+//************************************************************************************************************************************************************************
+		//Método para obter dados de ventos do dia
+			@Override
+			public Double obterDadosFator2(Map<String, Object> hourly){
+				
+				if (hourly == null) {
+					throw new DadosInvalidosException("Apresenta dados inválidos para ");
+				}
+		        
+				List<Double> radiacao = (List<Double>) hourly.get("radiacao");
+				return radiacao.get(9);
+				//Aqui muda
+			}
+	
+}

@@ -1,0 +1,9 @@
+package fundamento;
+
+public class InferenciasVariaveis {
+	public static void main(String[] args) {
+		var teste = "Vladimir";
+		System.out.println(teste);
+	}
+
+}

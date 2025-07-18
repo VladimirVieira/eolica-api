@@ -1,0 +1,101 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+import br.com.ufrn.pds1.projetopds1.exception.DadosInvalidosException;
+import br.com.ufrn.pds1.projetopds1.model.DadosDiarioHistoricoModel;
+import br.com.ufrn.pds1.projetopds1.model.DadosDiariosHistorico;
+
+//Classe abstrata base e nela foi utilizado o Método Template
+public abstract class DadosDiarioServiceTemplate {
+	
+	@Autowired
+    private ComunicacaoComApiExternacao apiExterna;
+	
+//**********************************************************************************************************************************************************************	
+		//Obtem o intervalo de data para emitir o histórico
+		protected List<String> obterIntervaloDeData() {
+		   
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    LocalDate coletaDataAtual = LocalDate.now(); 
+
+		    LocalDate anoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 1, 1);
+		    LocalDate fimAnoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 12, 31);
+
+		    String dataInicio = anoPassado.format(formatter);
+		    String dataFim = fimAnoPassado.format(formatter);
+
+		    List<String> intervalo = new ArrayList<>();
+		    intervalo.add(dataInicio);
+		    intervalo.add(dataFim);
+
+		    return intervalo;
+		    
+		    //continua
+		}
+		
+//*********************************************************************************************************************************************************************
+	//Constroi a URL
+	    protected abstract String montarUrl(double latitude, double longitude, String dataInicio, String dataFim);
+	    
+//*********************************************************************************************************************************************************************
+		
+		//Extraindo dados da open-meteo
+		protected Map<String, Object>extrairDadosApi(String url){
+			
+			try {
+				return apiExterna.extrairDadosApi(url);
+			}catch (Exception e) {
+				throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+			}
+		}
+		
+//********************************************************************************************************************************************************************
+		
+		protected abstract DadosDiarioHistoricoModel instanciarDadosDiario(Double latitude, Double longitude,Map<String, Object> daily);
+	
+//********************************************************************************************************************************************************************
+		//Calcular Média Temperatura
+		protected abstract List<Double> calcularFatorClimatico1(List<Double> fator1, List<Double> fator2);
+			
+//********************************************************************************************************************************************************************
+	   //Calcular velocidade média do Vento por trimestres
+		protected abstract DadosDiarioHistoricoModel calcularFatorClimatico2(List<String> datasAno, List<Double> ventos, DadosDiarioHistoricoModel armazemDados);
+
+//********************************************************************************************************************************************************************
+			
+		protected abstract DadosDiarioHistoricoModel armazenarDados(double latitude, double longitude);
+
+//********************************************************************************************************************************************************************
+		
+		protected void validarLatitudeLongitude(double latitude, double longitude) {
+		    if (Double.isNaN(latitude) || Double.isNaN(longitude)) {
+		        throw new DadosInvalidosException("Os valores de latitude ou longitude não são numéricos.");
+		    }
+		    if (latitude < -90 || latitude > 90) {
+		        throw new DadosInvalidosException("Os dados de latitude são inválidos. O intervalo válido é [-90, 90].");
+		    }
+		    if (longitude < -180 || longitude > 180) {
+		        throw new DadosInvalidosException("Os dados de longitude são inválidos. O intervalo válido é [-180, 180].");
+		    }
+		}
+		
+//********************************************************************************************************************************************************************
+		
+		protected void validarListas(List<String> datasAno, List<Double> ventos, DadosDiarioHistoricoModel armazemDados) {
+			if(datasAno == null || ventos == null) {
+				throw new DadosInvalidosException("As listas são inválidas/vazias");
+			}
+			
+			if(armazemDados == null){
+				throw new DadosInvalidosException("Dados inválidos");
+			}
+		}
+}

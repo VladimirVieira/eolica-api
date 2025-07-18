@@ -1,0 +1,12 @@
+package fundamentos;
+
+public class Inferencia {
+	public static void main(String[] args) {
+		var numero = 15;
+		System.out.println(numero);
+		
+		var texto = "Vladimir";
+		System.out.println(texto);
+	}
+
+}

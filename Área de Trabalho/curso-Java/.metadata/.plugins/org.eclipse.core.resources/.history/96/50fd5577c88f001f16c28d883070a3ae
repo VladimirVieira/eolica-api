@@ -1,0 +1,33 @@
+package fundamento;
+
+import java.util.Date;
+
+public class TiposPrimitivos {
+	public static void main(String[] args) {
+		byte valor = 1;
+		short valor2 = 10;
+		int valor3 = 25;
+		long valor4 = 300L;
+		float valor5 = 3.5F;
+		double valor6 = 4.5;
+		char valor7 ='a';
+		boolean valor8 = true;
+		String nome = "Vladimir Vieira"; //não é um tipo primitivo
+		Date data = new Date(();
+		
+		System.out.println(valor);
+		System.out.println(valor2);
+		System.out.println(valor3);
+		System.out.println(valor4);
+		System.out.println(valor5);
+		System.out.println(valor6);
+		System.out.println(valor7);
+		System.out.println(valor8);
+		nome = nome.replace("Vieira", "Nascimento");
+		System.out.println(nome.toUpperCase().length());
+		System.out.println(data);
+		
+	
+	}
+
+}

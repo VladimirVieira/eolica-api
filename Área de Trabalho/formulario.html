@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Clima</title>
+</head>
+<body>
+    <h1>Consulta de Dados Meteorológicos</h1>
+    <form action="/consultar" method="get">
+        <label for="codigo">Código da Estação INMET:</label>
+        <input type="text" id="codigo" name="codigo" required>
+        <br><br>
+        <label for="data">Data (AAAA-MM-DD):</label>
+        <input type="date" id="data" name="data" required>
+        <br><br>
+        <button type="submit">Consultar</button>
+    </form>
+</body>
+</html>
+

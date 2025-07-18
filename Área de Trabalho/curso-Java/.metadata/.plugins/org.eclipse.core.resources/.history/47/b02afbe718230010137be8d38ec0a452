@@ -1,0 +1,30 @@
+package estudo;
+
+import java.util.Scanner;
+
+public class ExercicioBr {
+	
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+	    int val = 0;
+	    while (true){
+	        val = scanner.nextInt();
+	        
+	        if(val==0){
+	            break;
+	        }else{
+	           for(int i = 1;i<=val;i++){
+	               System.out.print(i);
+	               if(i++<val){
+	                   System.out.print(" ");
+	               }
+	           }     
+	        }
+	        System.out.println();
+	    }
+	    scanner.close();
+	}
+	
+	
+
+}

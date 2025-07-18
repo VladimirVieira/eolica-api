@@ -1,0 +1,19 @@
+package fundamento;
+
+public class PrimitivoVsObjeto {
+	public static void main(String[] args) {
+		String s = "texto";
+		System.out.println(s.toUpperCase());
+		
+		
+		String string = new String("Vladimir Vieira");
+		System.out.println(string);
+		
+		
+		
+		
+		
+		
+		
+	}
+}

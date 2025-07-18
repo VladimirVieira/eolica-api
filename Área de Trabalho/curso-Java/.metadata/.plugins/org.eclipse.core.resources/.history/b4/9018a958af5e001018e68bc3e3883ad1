@@ -1,0 +1,52 @@
+package br.com.ufrn.pds1.projetopds1.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import br.com.ufrn.pds1.projetopds1.exception.ComunicacaoApiException;
+
+//Classe abstrata base e nela foi utilizado o Método Template
+public abstract class DadosDiarioServiceTemplate {
+	
+	//************************************************************************************************************************************	
+		//Obtem o intervalo de data para emitir o histórico
+		protected List<String> obterIntervaloDeData() {
+		   
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		    LocalDate coletaDataAtual = LocalDate.now(); 
+
+		    LocalDate anoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 1, 1);
+		    LocalDate fimAnoPassado = LocalDate.of(coletaDataAtual.getYear() - 1, 12, 31);
+
+		    String dataInicio = anoPassado.format(formatter);
+		    String dataFim = fimAnoPassado.format(formatter);
+
+		    List<String> intervalo = new ArrayList<>();
+		    intervalo.add(dataInicio);
+		    intervalo.add(dataFim);
+
+		    return intervalo;
+		    
+		    //continua
+		}
+		
+	//************************************************************************************************************************************
+	//Constroi a URL
+	    protected abstract String montarUrl();
+	    
+	//************************************************************************************************************************************
+		
+		//Extraindo dados da open-meteo
+		public Map<String, Object>extrairDadosApi(String url){
+			
+			try {
+				return apiExterna.extrairDadosApi(url);
+			}catch (Exception e) {
+				throw new ComunicacaoApiException("Erro ao realizar a comunicacao com a API",e);
+			}
+		}
+		  //Continua
+}
